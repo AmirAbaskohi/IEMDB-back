@@ -2,6 +2,7 @@ package com.iemdb.system;
 
 import com.iemdb.data.DataContext;
 import com.iemdb.info.AccountInfo;
+import com.iemdb.info.ActorInfo;
 import com.iemdb.model.*;
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONArray;
@@ -292,37 +293,22 @@ public class IEMDBSystem {
         return response;
     }
 
-    public JSONObject getActor(JSONObject jsonObject){
-        JSONObject response = new JSONObject();
-        JSONObject actorJsonObject = new JSONObject();
-
-        int actorId = jsonObject.getInt("actorId");
+    public ActorInfo getActor(int actorId){
         int actorIndex = context.findActor(actorId);
 
         if(actorIndex < 0){
-            response.put("success", false);
-            response.put("com/iemdb", "ActorNotFound");
-            return response;
+            throw new RuntimeException("Actor not found.");
         }
         Actor actor = context.getActors().get(actorIndex);
 
-        int tma = 0;
+        ArrayList<Movie> actorMovies = new ArrayList<>();
         for(Movie movie: context.getMovies()){
             if (movie.hasActor(actorId)){
-                tma += 1;
+                actorMovies.add(movie);
             }
         }
 
-        actorJsonObject.put("id", actorId);
-        actorJsonObject.put("name", actor.getName());
-        actorJsonObject.put("birthDate", actor.getBirthDate());
-//        actorJsonObject.put("age", Period.between(actor.getBirthDate(), LocalDate.now()).getYears());
-        actorJsonObject.put("nationality", actor.getNationality());
-        actorJsonObject.put("tma", tma);
-
-        response.put("success", true);
-        response.put("com/iemdb", actorJsonObject);
-        return response;
+        return new ActorInfo(actor, actorMovies);
     }
 
     public JSONObject getMovieActors(JSONObject jsonObject){
@@ -336,12 +322,10 @@ public class IEMDBSystem {
             return response;
         }
 
-        ArrayList<JSONObject> movieActors = new ArrayList<>();
+        ArrayList<ActorInfo> movieActors = new ArrayList<>();
         Movie movie = context.getMovies().get(movieIndex);
         for (int actorId : movie.getCastIds()){
-            JSONObject request = new JSONObject();
-            request.put("actorId", actorId);
-            movieActors.add(getActor(request).getJSONObject("com/iemdb"));
+            movieActors.add(getActor(actorId));
         }
 
         response.put("success", true);

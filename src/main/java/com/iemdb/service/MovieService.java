@@ -25,7 +25,7 @@ public class MovieService {
             movieInfos.add(movieInfo);
         }
 
-        ResponseInfo response = new ResponseInfo(movieInfos, true);
+        ResponseInfo response = new ResponseInfo(movieInfos, true, "Movies returned successfully.");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

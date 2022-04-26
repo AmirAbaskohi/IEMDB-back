@@ -9,11 +9,12 @@ public class Actor {
     private String nationality;
     private String image;
 
-    public Actor(int _id, String _name, String _birthDate, String _nationality){
+    public Actor(int _id, String _name, String _birthDate, String _nationality, String _image){
         id = _id;
         name = _name;
         birthDate = _birthDate;
         nationality = _nationality;
+        image = _image;
     }
 
     public Actor(JSONObject jsonObject){
@@ -21,22 +22,14 @@ public class Actor {
         name = jsonObject.getString("name");
         birthDate = jsonObject.getString("birthDate");
         nationality = jsonObject.getString("nationality");
-        image = jsonObject.getString("nationality");
-
-//        System.out.println(jsonObject.getString("birthDate"));
-//        DateFormat fmt = new SimpleDateFormat("MMMM dd, yyyy", Locale.US);
-//        try {
-//            Date d = fmt.parse(jsonObject.getString("birthDate"));
-//            birthDate =  d.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-//        }catch (Exception e){
-//            System.out.println("Cannot parse the date!!!");
-//        }
+        image = jsonObject.getString("image");
     }
 
     public void update(Actor _actor){
         name = _actor.getName();
         birthDate = _actor.getBirthDate();
         nationality = _actor.getNationality();
+        image = _actor.getImage();
     }
 
     public int getId(){return id;}
@@ -46,4 +39,6 @@ public class Actor {
     public String getBirthDate(){return birthDate;}
 
     public String getNationality(){return nationality;}
+
+    public String getImage(){return image;}
 }
