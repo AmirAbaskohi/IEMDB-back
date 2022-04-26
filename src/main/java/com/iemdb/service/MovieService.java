@@ -2,6 +2,7 @@ package com.iemdb.service;
 
 import com.iemdb.info.MovieInfo;
 import com.iemdb.info.RatingInfo;
+import com.iemdb.info.ResponseInfo;
 import com.iemdb.model.Movie;
 import com.iemdb.system.IEMDBSystem;
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,9 @@ public class MovieService {
             MovieInfo movieInfo = new MovieInfo(movie);
             movieInfos.add(movieInfo);
         }
-        return new ResponseEntity<>(movieInfos, HttpStatus.ACCEPTED);
+
+        ResponseInfo response = new ResponseInfo(movieInfos);
+        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
 
     @RequestMapping(value = "/{movieId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
