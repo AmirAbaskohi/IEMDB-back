@@ -1,9 +1,9 @@
 package com.iemdb.service;
 
 import com.iemdb.info.MovieInfo;
-import com.iemdb.info.RatingInfo;
 import com.iemdb.info.ResponseInfo;
 import com.iemdb.model.Movie;
+import com.iemdb.model.Rate;
 import com.iemdb.system.IEMDBSystem;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,31 +25,35 @@ public class MovieService {
             movieInfos.add(movieInfo);
         }
 
-        ResponseInfo response = new ResponseInfo(movieInfos);
-        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+        ResponseInfo response = new ResponseInfo(movieInfos, true);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{movieId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MovieInfo> getMovie(@PathVariable(value = "movieId") int movieId) {
+    public ResponseEntity<ResponseInfo> getMovie(@PathVariable(value = "movieId") int movieId) {
         try {
             MovieInfo movieInfo = new MovieInfo(iemdbSystem.getMovieById(movieId));
-            return new ResponseEntity<>(movieInfo, HttpStatus.ACCEPTED);
+            ResponseInfo response = new ResponseInfo(movieInfo, true, "Movie returned successfully.");
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (Exception e){
             System.out.println(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            ResponseInfo response = new ResponseInfo(null, true, "Movie not found.");
+            response.addError("Movie not found.");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
 
     @RequestMapping(value = "/{movieId}/rate", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RatingInfo> rateMovie(@PathVariable(value = "movieId") int movieId,
+    public ResponseEntity<ResponseInfo> rateMovie(@PathVariable(value = "movieId") int movieId,
                                                 @RequestParam(value = "score") int score) {
         try {
-            iemdbSystem.rateMovie(iemdbSystem.getCurrentUser(), movieId, score);
-            RatingInfo ratingInfo = new RatingInfo(true, "Movie rated successfully");
-            return new ResponseEntity<>(ratingInfo, HttpStatus.ACCEPTED);
+            Rate rate = iemdbSystem.rateMovie(iemdbSystem.getCurrentUser(), movieId, score);
+            ResponseInfo response = new ResponseInfo(rate,true, "Movie rated successfully.");
+            return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
         }catch (Exception e){
-            RatingInfo ratingInfo = new RatingInfo(false, e.getMessage());
-            return new ResponseEntity<>(ratingInfo, HttpStatus.BAD_REQUEST);
+            ResponseInfo response = new ResponseInfo(null, false, "Movie rating failed.");
+            response.addError(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
 }

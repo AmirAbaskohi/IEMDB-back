@@ -1,6 +1,7 @@
 package com.iemdb.system;
 
 import com.iemdb.data.DataContext;
+import com.iemdb.info.AccountInfo;
 import com.iemdb.model.*;
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONArray;
@@ -94,7 +95,7 @@ public class IEMDBSystem {
         newComment.setUserNickname(context.getUsers().get(userIndex).getNickname());
     }
 
-    public void rateMovie(String userEmail, int movieId, int score){
+    public Rate rateMovie(String userEmail, int movieId, int score){
         int userIndex = context.findUser(userEmail);
         int movieIndex = context.findMovie(movieId);
 
@@ -110,6 +111,8 @@ public class IEMDBSystem {
         Rate newRate = new Rate(userEmail, movieId, score);
 
         context.getMovies().get(movieIndex).addRate(newRate);
+
+        return newRate;
     }
 
     public JSONObject voteComment(JSONObject jsonObject){
@@ -565,7 +568,24 @@ public class IEMDBSystem {
 
     public String getCurrentUser(){return currentUser;}
 
-    public void login(String _currentUser){currentUser = _currentUser;}
+    public AccountInfo login(String email, String password) {
+        ArrayList<User> users = context.getUsers();
+        User foundedUser = null;
+        for (User user: users) {
+            if (user.getEmail().equals(email)) {
+                foundedUser = user;
+                break;
+            }
+        }
+        if (foundedUser == null) {
+            throw new RuntimeException("UserNotFound");
+        }
+        if (!foundedUser.getPassword().equals(password)) {
+            throw new RuntimeException("UserNameOrPasswordWrong");
+        }
+        currentUser = email;
+        return new AccountInfo(email);
+    }
 
     public void logout(){currentUser = "";}
 }

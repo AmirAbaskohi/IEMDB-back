@@ -6,23 +6,27 @@ public class ResponseInfo {
     private final Object value;
     private final ArrayList<String> errors;
     private final String message;
+    private final boolean success;
 
-    public ResponseInfo(Object _value) {
+    public ResponseInfo(Object _value, boolean _success) {
         value = _value;
         message = "No Message";
         errors = new ArrayList<>();
+        success = _success;
     }
 
-    public ResponseInfo(Object _value, String _message) {
+    public ResponseInfo(Object _value, boolean _success, String _message) {
         value = _value;
         message = _message.isBlank() || _message.isBlank() ? "No Message" : _message;
         errors = new ArrayList<>();
+        success = _success;
     }
 
-    public ResponseInfo(Object _value, String _message, ArrayList<String> _errors) {
+    public ResponseInfo(Object _value, boolean _success, String _message, ArrayList<String> _errors) {
         value = _value;
         message = _message.isBlank() || _message.isBlank() ? "No Message" : _message;
         errors = _errors;
+        success = _success;
     }
 
     public void addError(String error) {
