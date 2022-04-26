@@ -26,7 +26,7 @@ public class IEMDBSystem {
 
     private DataContext context;
 
-    private String currentUser = "sara@ut.ac.ir";
+    private String currentUser = "";
 
     public IEMDBSystem(){
         context = new DataContext();
