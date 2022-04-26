@@ -18,7 +18,7 @@ public class MovieService {
     IEMDBSystem iemdbSystem = IEMDBSystem.getInstance();
 
     @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ArrayList<MovieInfo>> getMovies() {
+    public ResponseEntity<ResponseInfo> getMovies() {
         ArrayList<MovieInfo> movieInfos = new ArrayList<>();
         for(Movie movie : iemdbSystem.getMoviesList()){
             MovieInfo movieInfo = new MovieInfo(movie);
