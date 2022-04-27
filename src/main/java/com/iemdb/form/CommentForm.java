@@ -4,6 +4,11 @@ public class CommentForm {
     private int movieId;
     private String text;
 
+    public CommentForm() {
+        text = null;
+        movieId = 0;
+    }
+
     public CommentForm(int _movieId, String _text) {
         text = _text;
         movieId = _movieId;

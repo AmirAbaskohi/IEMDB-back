@@ -3,6 +3,7 @@ package com.iemdb.service;
 import com.iemdb.exception.NotFoundException;
 import com.iemdb.form.CommentForm;
 import com.iemdb.info.ResponseInfo;
+import com.iemdb.model.Comment;
 import com.iemdb.system.IEMDBSystem;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,9 +19,10 @@ public class CommentService {
     public ResponseEntity<ResponseInfo> addComment(@RequestBody CommentForm commentForm) {
         ResponseInfo response = new ResponseInfo();
         try {
-            iemdbSystem.addComment(iemdbSystem.getCurrentUser(), commentForm.getText(), commentForm.getMovieId());
+            Comment newComment = iemdbSystem.addComment(iemdbSystem.getCurrentUser(), commentForm.getText(), commentForm.getMovieId());
             response.setMessage("Comment added successfully.");
             response.setSuccess(true);
+            response.setValue(newComment);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         catch (NotFoundException ex) {
