@@ -23,7 +23,7 @@ public class MovieInfo {
     private final double imdbRate;
     private final int ageLimit;
     private final int duration;
-//    private final ArrayList<Comment> comments;
+    private final ArrayList<Comment> comments;
 
 
     public MovieInfo(Movie movie){
@@ -42,7 +42,7 @@ public class MovieInfo {
         imdbRate = movie.getImdbRate();
         ageLimit = movie.getAgeLimit();
         duration = movie.getDuration();
-//        comments = movie.getComments();
+        comments = movie.getComments();
     }
 
     public int getId(){return id;}
@@ -60,5 +60,5 @@ public class MovieInfo {
     public ArrayList<Rate> getRates(){return rates;}
     public String getImage(){return image;}
     public String getCoverImage(){return coverImage;}
-//    public ArrayList<Comment> getComments(){return comments;}
+    public ArrayList<Comment> getComments(){return comments;}
 }

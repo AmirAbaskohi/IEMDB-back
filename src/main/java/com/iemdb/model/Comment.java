@@ -1,6 +1,7 @@
 package com.iemdb.model;
 
 
+import com.iemdb.info.VoteInfo;
 import org.json.*;
 
 import java.time.LocalDateTime;
@@ -44,8 +45,7 @@ public class Comment {
         return -1;
     }
 
-    public JSONObject getVotes(){
-        JSONObject response = new JSONObject();
+    public VoteInfo getVotes(){
         int numOfLikes = 0;
         int numOfNeutrals = 0;
         int numOfDislikes = 0;
@@ -57,30 +57,16 @@ public class Comment {
             if(vote.getVote() == -1)
                 numOfDislikes++;
         }
-        response.put("like", numOfLikes);
-        response.put("neutral", numOfNeutrals);
-        response.put("dislike", numOfDislikes);
-        return response;
+        return new VoteInfo(numOfLikes, numOfDislikes, numOfNeutrals);
     }
 
     public void setId(int _id){id = _id;}
 
     public void setUserNickname(String _userNickname){userNickname = _userNickname;}
 
-    public JSONObject getInfo(){
-        JSONObject votes = getVotes();
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("commentId", id);
-        jsonObject.put("userEmail", userEmail);
-        jsonObject.put("userNickname", userNickname);
-        jsonObject.put("text", text);
-        jsonObject.put("like", votes.getInt("like"));
-        jsonObject.put("dislike", votes.getInt("dislike"));
-        return jsonObject;
-    }
-
     public int getId(){return id;}
     public String getUserEmail(){return userEmail;};
+    public String getUserNickname(){return userNickname;}
     public int getMovieId(){return movieId;};
     public String getText(){return text;};
 }
