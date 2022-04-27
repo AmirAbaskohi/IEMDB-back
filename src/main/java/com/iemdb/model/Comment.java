@@ -16,22 +16,12 @@ public class Comment {
 
     ArrayList<Vote> votes;
 
-    public Comment(JSONObject jsonObject, int _id){
-        votes = new ArrayList<>();
+    public Comment(int _id, String _userEmail, int _movieId, String _text){
         id = _id;
-        userEmail = jsonObject.getString("userEmail");
-        movieId = jsonObject.getInt("movieId");
-        text = jsonObject.getString("text");
-        creationTime = LocalDateTime.now();
-    }
-
-    public Comment(JSONObject jsonObject){
         votes = new ArrayList<>();
-        id = 0;
-        userEmail = jsonObject.getString("userEmail");
-        movieId = jsonObject.getInt("movieId");
-        text = jsonObject.getString("text");
-
+        userEmail = _userEmail;
+        movieId = _movieId;
+        text = _text;
         creationTime = LocalDateTime.now();
     }
 

@@ -40,7 +40,7 @@ public class AccountService {
         }
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/logout", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseInfo> login() {
         ResponseInfo response = new ResponseInfo(null, true, "Logged out successfully.");
         return new ResponseEntity(response, HttpStatus.OK);

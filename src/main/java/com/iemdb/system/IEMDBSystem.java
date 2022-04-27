@@ -80,21 +80,18 @@ public class IEMDBSystem {
         }
     }
 
-    public void addComment(JSONObject jsonObject) throws NotFoundException{
-        Comment newComment = new Comment(jsonObject);
-
-        int userIndex = context.findUser(jsonObject.getString("userEmail"));
-        int movieIndex = context.findMovie(jsonObject.getInt("movieId"));
-
-        if(userIndex < 0){
-            throw new NotFoundException("UserNotFound");
-        }
+    public Comment addComment(String userEmail, String text, int movieId) throws NotFoundException{
+        int movieIndex = context.findMovie(movieId);
+        int userIndex = context.findUser(userEmail);
         if(movieIndex < 0){
             throw new NotFoundException("MovieNotFound");
         }
 
+        Comment newComment = new Comment(context.getComments().size() + 1, userEmail, movieId, text);
         context.addComment(newComment);
         newComment.setUserNickname(context.getUsers().get(userIndex).getNickname());
+
+        return newComment;
     }
 
     public Rate rateMovie(String userEmail, int movieId, int score) throws NotFoundException{
@@ -293,6 +290,15 @@ public class IEMDBSystem {
         return movieActors;
     }
 
+    public ArrayList<Comment> getMovieComments(int movieId) throws NotFoundException{
+        int movieIndex = context.findMovie(movieId);
+        if(movieId < 0){
+            throw new NotFoundException("Movie not found.");
+        }
+        Movie movie = context.getMovies().get(movieIndex);
+        return movie.getComments();
+    }
+
     public JSONObject getUser(JSONObject jsonObject){
         JSONObject response = new JSONObject();
         JSONObject userJsonObject = new JSONObject();
@@ -315,28 +321,28 @@ public class IEMDBSystem {
         return response;
     }
 
-    public JSONObject getWatchList(JSONObject jsonObject){
-        JSONObject response = new JSONObject();
-        JSONObject watchList = new JSONObject();
-
-        int userIndex = context.findUser(jsonObject.getString("userEmail"));
-
-        if(userIndex < 0){
-            response.put("success", false);
-            response.put("com/iemdb", "UserNotFound");
-            return response;
-        }
-
-        ArrayList<Movie> userWatchList = context.getUsers().get(userIndex).getWatchList();
-        ArrayList<JSONObject> info = new ArrayList<>();
-        for (Movie movie: userWatchList){
-            info.add(movie.getInfoFull());
-        }
-        watchList.put("WatchList", info);
-        response.put("success", true);
-        response.put("com/iemdb", watchList);
-        return response;
-    }
+//    public JSONObject getWatchList(JSONObject jsonObject){
+//        JSONObject response = new JSONObject();
+//        JSONObject watchList = new JSONObject();
+//
+//        int userIndex = context.findUser(jsonObject.getString("userEmail"));
+//
+//        if(userIndex < 0){
+//            response.put("success", false);
+//            response.put("com/iemdb", "UserNotFound");
+//            return response;
+//        }
+//
+//        ArrayList<Movie> userWatchList = context.getUsers().get(userIndex).getWatchList();
+//        ArrayList<JSONObject> info = new ArrayList<>();
+//        for (Movie movie: userWatchList){
+//            info.add(movie.getInfoFull());
+//        }
+//        watchList.put("WatchList", info);
+//        response.put("success", true);
+//        response.put("com/iemdb", watchList);
+//        return response;
+//    }
 
     public Double calculateScore(ArrayList<Movie> userWatchList, Movie movie){
         double score = 0;
@@ -357,39 +363,39 @@ public class IEMDBSystem {
         return score;
     }
 
-    public JSONObject getRecommendationList(JSONObject jsonObject){
-        JSONObject response = new JSONObject();
-        JSONObject tempObject = new JSONObject();
-
-        int userIndex = context.findUser(jsonObject.getString("userEmail"));
-
-        if(userIndex < 0){
-            response.put("success", false);
-            response.put("com/iemdb", "UserNotFound");
-            return response;
-        }
-
-        ArrayList<Movie> userWatchList = context.getUsers().get(userIndex).getWatchList();
-        ArrayList<Movie> recommendationList =new ArrayList<>(context.getMovies());
-        recommendationList.sort(Comparator.comparing(o -> calculateScore(userWatchList, o)));
-        Collections.reverse(recommendationList);
-
-        int numOfRecommendations = 0;
-        ArrayList<JSONObject> info = new ArrayList<>();
-
-        for (Movie movie: recommendationList){
-            if(numOfRecommendations > 2) break;
-
-            if(userWatchList.contains(movie)) continue;
-
-            info.add(movie.getInfoFull());
-            numOfRecommendations += 1;
-        }
-        tempObject.put("RecommendationList", info);
-        response.put("success", true);
-        response.put("com/iemdb", tempObject);
-        return response;
-    }
+//    public JSONObject getRecommendationList(JSONObject jsonObject){
+//        JSONObject response = new JSONObject();
+//        JSONObject tempObject = new JSONObject();
+//
+//        int userIndex = context.findUser(jsonObject.getString("userEmail"));
+//
+//        if(userIndex < 0){
+//            response.put("success", false);
+//            response.put("com/iemdb", "UserNotFound");
+//            return response;
+//        }
+//
+//        ArrayList<Movie> userWatchList = context.getUsers().get(userIndex).getWatchList();
+//        ArrayList<Movie> recommendationList =new ArrayList<>(context.getMovies());
+//        recommendationList.sort(Comparator.comparing(o -> calculateScore(userWatchList, o)));
+//        Collections.reverse(recommendationList);
+//
+//        int numOfRecommendations = 0;
+//        ArrayList<JSONObject> info = new ArrayList<>();
+//
+//        for (Movie movie: recommendationList){
+//            if(numOfRecommendations > 2) break;
+//
+//            if(userWatchList.contains(movie)) continue;
+//
+//            info.add(movie.getInfoFull());
+//            numOfRecommendations += 1;
+//        }
+//        tempObject.put("RecommendationList", info);
+//        response.put("success", true);
+//        response.put("com/iemdb", tempObject);
+//        return response;
+//    }
 
     public ArrayList<Movie> sortMoviesByReleaseDate(ArrayList<Movie> movies){
         ArrayList<Movie> sortedMovies = new ArrayList<>(movies);
@@ -445,7 +451,8 @@ public class IEMDBSystem {
         JSONArray jsonArray = new JSONArray(response.get(0));
         for (Object commentData : jsonArray){
             try {
-                addComment((JSONObject) commentData);
+                JSONObject comment = (JSONObject)commentData;
+                addComment(comment.getString("userEmail"), comment.getString("text"), comment.getInt("movieId"));
             }
             catch (Exception ex) {}
         }

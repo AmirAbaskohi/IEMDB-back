@@ -1,5 +1,6 @@
 package com.iemdb.info;
 
+import com.iemdb.model.Comment;
 import com.iemdb.model.Movie;
 import com.iemdb.model.Rate;
 
@@ -22,6 +23,7 @@ public class MovieInfo {
     private final double imdbRate;
     private final int ageLimit;
     private final int duration;
+    private final ArrayList<Comment> comments;
 
 
     public MovieInfo(Movie movie){
@@ -41,6 +43,7 @@ public class MovieInfo {
         imdbRate = movie.getImdbRate();
         ageLimit = movie.getAgeLimit();
         duration = movie.getDuration();
+        comments = movie.getComments();
     }
 
     public int getId(){return id;}
@@ -59,4 +62,5 @@ public class MovieInfo {
     public ArrayList<Rate> getRates(){return rates;}
     public String getImage(){return image;}
     public String getCoverImage(){return coverImage;}
+    public ArrayList<Comment> getMovies(){return comments;}
 }

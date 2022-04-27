@@ -4,6 +4,7 @@ import com.iemdb.exception.NotFoundException;
 import com.iemdb.info.ActorInfo;
 import com.iemdb.info.MovieInfo;
 import com.iemdb.info.ResponseInfo;
+import com.iemdb.model.Comment;
 import com.iemdb.model.Movie;
 import com.iemdb.model.Rate;
 import com.iemdb.system.IEMDBSystem;
@@ -121,6 +122,19 @@ public class MovieService {
         try {
             ArrayList<ActorInfo> movieActors = iemdbSystem.getMovieActors(movieId);
             ResponseInfo response = new ResponseInfo(movieActors,true, "Movie actors returned successfully.");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (NotFoundException e){
+            ResponseInfo response = new ResponseInfo(null, false, "Movie not found.");
+            response.addError(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @RequestMapping(value = "/{movieId}/comments", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseInfo> getMovieComments(@PathVariable(value = "movieId") int movieId) {
+        try {
+            ArrayList<Comment> movieComments = iemdbSystem.getMovieComments(movieId);
+            ResponseInfo response = new ResponseInfo(movieComments,true, "Movie comments returned successfully.");
             return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (NotFoundException e){
             ResponseInfo response = new ResponseInfo(null, false, "Movie not found.");

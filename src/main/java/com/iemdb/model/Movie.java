@@ -133,29 +133,6 @@ public class Movie {
         return info;
     }
 
-    public JSONObject getInfoFull(){
-        ArrayList<JSONObject> commentsInfo = new ArrayList<>();
-        for (Comment comment: comments){
-            commentsInfo.add(comment.getInfo());
-        }
-        JSONObject info = new JSONObject();
-        info.put("movieId", id);
-        info.put("name", name);
-        info.put("summary", summary);
-        info.put("releaseDate", releaseDate);
-        info.put("writers", Util.ArrayStringToString(writers));
-        info.put("director", director);
-        info.put("genres", Util.ArrayStringToString(genres));
-        info.put("cast", Util.ArrayStringToString(cast));
-        info.put("imdbRate", imdbRate);
-        info.put("rating", rating == null ? JSONObject.NULL : rating);
-        info.put("ageLimit", ageLimit);
-        info.put("duration", duration);
-        info.put("comments", commentsInfo);
-
-        return info;
-    }
-
     public boolean hasGenre(String genre){
         return genres.contains(genre);
     }
@@ -184,6 +161,7 @@ public class Movie {
     public ArrayList<Rate> getRates(){return rates;}
     public String getImage(){return image;}
     public String getCoverImage(){return coverImage;}
+    public ArrayList<Comment> getComments(){return comments;}
 
     public int compareByReleaseDate(Movie movie2){
         return this.releaseDate.compareTo(movie2.releaseDate);
