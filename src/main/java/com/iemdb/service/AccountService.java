@@ -25,7 +25,7 @@ public class AccountService {
         return new ResponseEntity(response, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AccountInfo> login(@RequestParam(value = "email") String email,
                                              @RequestParam(value = "password") String password) {
         try{
@@ -38,5 +38,11 @@ public class AccountService {
             response.addError(ex.getMessage());
             return new ResponseEntity(response, HttpStatus.UNAUTHORIZED);
         }
+    }
+
+    @RequestMapping(value = "/login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseInfo> login() {
+        ResponseInfo response = new ResponseInfo(null, true, "Logged out successfully.");
+        return new ResponseEntity(response, HttpStatus.OK);
     }
 }
