@@ -220,77 +220,44 @@ public class IEMDBSystem {
         return context.getMovies().get(movieIndex);
     }
 
-    public JSONObject getMoviesByGenre(JSONObject jsonObject){
-        JSONObject response = new JSONObject();
-        JSONObject moviesList = new JSONObject();
-
-        String genre = jsonObject.getString("genre");
-
-        ArrayList<JSONObject> info = new ArrayList<>();
-        for (Movie movie: context.getMovies()){
+    public ArrayList<Movie> getMoviesByGenre(ArrayList<Movie> movies, String genre){
+        ArrayList<Movie> result = new ArrayList<>();
+        for (Movie movie: movies){
             if(movie.hasGenre(genre)){
-                info.add(movie.getInfoFull());
+                result.add(movie);
             }
         }
-        moviesList.put("MoviesList", info);
-        response.put("success", true);
-        response.put("com/iemdb", moviesList);
-        return response;
+        return result;
     }
 
-    public JSONObject getMoviesByActor(JSONObject jsonObject){
-        JSONObject response = new JSONObject();
-        JSONObject moviesList = new JSONObject();
-
-        int actorId = jsonObject.getInt("actorId");
-
-        ArrayList<JSONObject> info = new ArrayList<>();
+    public ArrayList<Movie> getMoviesByActor(int actorId){
+        ArrayList<Movie> result = new ArrayList<>();
         for (Movie movie: context.getMovies()){
             if(movie.hasActor(actorId)){
-                info.add(movie.getInfoFull());
+                result.add(movie);
             }
         }
-        moviesList.put("MoviesList", info);
-        response.put("success", true);
-        response.put("com/iemdb", moviesList);
-        return response;
+        return result;
     }
 
-    public JSONObject getMoviesByDate(JSONObject jsonObject){
-        JSONObject response = new JSONObject();
-        JSONObject moviesList = new JSONObject();
-
-        int startYear = jsonObject.getInt("startYear");
-        int endYear = jsonObject.getInt("endYear");
-
-        ArrayList<JSONObject> info = new ArrayList<>();
-        for (Movie movie: context.getMovies()){
+    public ArrayList<Movie> getMoviesByDate(ArrayList<Movie> movies, int startYear, int endYear){
+        ArrayList<Movie> result = new ArrayList<>();
+        for (Movie movie: movies){
             if(movie.getReleaseDate().getYear() >= startYear && movie.getReleaseDate().getYear() <= endYear){
-                info.add(movie.getInfoFull());
+                result.add(movie);
             }
         }
-        moviesList.put("MoviesList", info);
-        response.put("success", true);
-        response.put("com/iemdb", moviesList);
-        return response;
+        return result;
     }
 
-    public JSONObject getMoviesBySearchName(JSONObject jsonObject){
-        JSONObject response = new JSONObject();
-        JSONObject moviesList = new JSONObject();
-
-        String searchKey = jsonObject.getString("searchKey");
-
-        ArrayList<JSONObject> info = new ArrayList<>();
-        for (Movie movie: context.getMovies()){
+    public ArrayList<Movie> getMoviesBySearchName(ArrayList<Movie> movies, String searchKey){
+        ArrayList<Movie> result = new ArrayList<>();
+        for (Movie movie: movies){
             if(StringUtils.contains(movie.getName().toLowerCase(), searchKey.toLowerCase())){
-                info.add(movie.getInfoFull());
+                result.add(movie);
             }
         }
-        moviesList.put("MoviesList", info);
-        response.put("success", true);
-        response.put("com/iemdb", moviesList);
-        return response;
+        return result;
     }
 
     public ActorInfo getActor(int actorId){
@@ -431,61 +398,18 @@ public class IEMDBSystem {
         return response;
     }
 
-    public JSONObject getSortedMoviesByReleaseDate(JSONArray movies){
-        ArrayList<Movie> sortedMovies = sortMoviesByReleaseDate(movies);
-        Collections.reverse(sortedMovies);
-
-        JSONObject response = new JSONObject();
-        JSONObject moviesList = new JSONObject();
-
-        ArrayList<JSONObject> info = new ArrayList<>();
-        for (Movie movie: sortedMovies){
-            info.add(movie.getInfoFull());
-        }
-        moviesList.put("MoviesList", info);
-        response.put("success", true);
-        response.put("com/iemdb", moviesList);
-        return response;
-    }
-
-    public JSONObject getSortedMoviesByImdbRate(JSONArray movies){
-        ArrayList<Movie> sortedMovies = sortMoviesByImdbRate(movies);
-        Collections.reverse(sortedMovies);
-
-        JSONObject response = new JSONObject();
-        JSONObject moviesList = new JSONObject();
-
-        ArrayList<JSONObject> info = new ArrayList<>();
-        for (Movie movie: sortedMovies){
-            info.add(movie.getInfoFull());
-        }
-        moviesList.put("MoviesList", info);
-        response.put("success", true);
-        response.put("com/iemdb", moviesList);
-        return response;
-    }
-
-    public ArrayList<Movie> sortMoviesByReleaseDate(JSONArray movies){
-        ArrayList<Movie> sortedMovies = JSONArrayMovieToArrayList(movies);
+    public ArrayList<Movie> sortMoviesByReleaseDate(ArrayList<Movie> movies){
+        ArrayList<Movie> sortedMovies = new ArrayList<>(movies);
         sortedMovies.sort(Movie::compareByReleaseDate);
+        Collections.reverse(sortedMovies);
         return sortedMovies;
     }
 
-    public ArrayList<Movie> sortMoviesByImdbRate(JSONArray movies){
-        ArrayList<Movie> sortedMovies = JSONArrayMovieToArrayList(movies);
+    public ArrayList<Movie> sortMoviesByImdbRate(ArrayList<Movie> movies){
+        ArrayList<Movie> sortedMovies = new ArrayList<>(movies);
         sortedMovies.sort(Movie::compareByImdbRate);
+        Collections.reverse(sortedMovies);
         return sortedMovies;
-    }
-
-    public ArrayList<Movie> JSONArrayMovieToArrayList(JSONArray jsonArray){
-        ArrayList<Movie> response = new ArrayList<>();
-        for(Object object: jsonArray){
-            JSONObject movieJson = (JSONObject) object;
-            int movieIndex = context.findMovie(movieJson.getInt("movieId"));
-            Movie movie = context.getMovies().get(movieIndex);
-            response.add(movie);
-        }
-        return response;
     }
 
 

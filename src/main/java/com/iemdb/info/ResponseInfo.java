@@ -3,10 +3,17 @@ package com.iemdb.info;
 import java.util.ArrayList;
 
 public class ResponseInfo {
-    private final Object value;
-    private final ArrayList<String> errors;
-    private final String message;
-    private final boolean success;
+    private Object value;
+    private ArrayList<String> errors;
+    private String message;
+    private boolean success;
+
+    public ResponseInfo() {
+        value = null;
+        message = null;
+        success = true;
+        errors = new ArrayList<>();
+    }
 
     public ResponseInfo(Object _value, boolean _success) {
         value = _value;
@@ -40,4 +47,10 @@ public class ResponseInfo {
     public String getMessage() { return message; }
     public ArrayList<String> getErrors() { return errors; }
     public Object getValue() { return value; }
+    public boolean getSuccess() { return success; }
+
+    public void setSuccess(boolean _success) { success = _success; }
+    public void setMessage(String _message) { message = _message; }
+    public void setErrors(ArrayList<String> _errors) { errors = _errors; }
+    public void setValue(Object _value) { _value = value; }
 }
