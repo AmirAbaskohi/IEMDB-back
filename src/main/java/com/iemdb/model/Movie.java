@@ -1,5 +1,7 @@
 package com.iemdb.model;
 
+import com.iemdb.info.ActorInfo;
+import com.iemdb.service.ActorService;
 import com.iemdb.utils.Util;
 import org.json.JSONObject;
 
@@ -18,8 +20,7 @@ public class Movie {
     private String director;
     private ArrayList<String> writers;
     private ArrayList<String> genres;
-    private ArrayList<Integer> castId;
-    private ArrayList<String> cast;
+    private ArrayList<Actor> cast;
     private double imdbRate;
     private int duration;
     private int ageLimit;
@@ -35,10 +36,9 @@ public class Movie {
     private static final DecimalFormat df = new DecimalFormat("0.0");
 
 
-    public Movie(JSONObject jsonObject){
+    public Movie(JSONObject jsonObject, ArrayList<Actor> allActors){
         writers = new ArrayList<>();
         genres = new ArrayList<>();
-        castId = new ArrayList<>();
         cast = new ArrayList<>();
         comments = new ArrayList<>();
         rates = new ArrayList<>();
@@ -67,8 +67,13 @@ public class Movie {
         for(Object genre: jsonObject.getJSONArray("genres")){
             genres.add((String) genre);
         }
-        for(Object actorId: jsonObject.getJSONArray("cast")){
-            castId.add((Integer) actorId);
+        ArrayList<Integer> castIds = new ArrayList<Integer>();
+        for(Object actor: jsonObject.getJSONArray("cast")){
+            castIds.add((Integer)actor);
+        }
+        for (Actor actor : allActors) {
+            if (castIds.contains(actor.getId()))
+                cast.add(actor);
         }
     }
 
@@ -86,8 +91,8 @@ public class Movie {
         cast = _movie.getCast();
     }
 
-    public void addCast(String _name){
-        cast.add(_name);
+    public void addCast(Actor actor){
+        cast.add(actor);
     }
 
     public void addComment(Comment comment){
@@ -138,7 +143,10 @@ public class Movie {
     }
 
     public boolean hasActor(int actorId){
-        return castId.contains(actorId);
+        for (Actor actor : cast)
+            if (actor.getId() == actorId)
+                return true;
+        return false;
     }
 
     public boolean hasPermissionToWatch(int userAge){
@@ -152,8 +160,7 @@ public class Movie {
     public String getDirector(){return director;}
     public ArrayList<String> getWriters(){return writers;}
     public ArrayList<String> getGenres(){return genres;}
-    public ArrayList<String> getCast(){return cast;}
-    public ArrayList<Integer> getCastIds(){return castId;}
+    public ArrayList<Actor> getCast(){return cast;}
     public double getImdbRate(){return imdbRate;}
     public int getDuration(){return duration;}
     public int getAgeLimit(){return ageLimit;}

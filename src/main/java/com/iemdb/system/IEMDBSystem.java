@@ -51,14 +51,19 @@ public class IEMDBSystem {
     }
 
     public void addMovie(JSONObject jsonObject) throws NotFoundException{
-        Movie newMovie = new Movie(jsonObject);
+        Movie newMovie = new Movie(jsonObject, context.getActors());
 
         for(Object actorId: jsonObject.getJSONArray("cast")){
             int actorIndex = context.findActor((Integer) actorId);
             if(actorIndex < 0){
                 throw new NotFoundException("Actor Not Found");
             }
-            newMovie.addCast(context.getActors().get(actorIndex).getName());
+            for (Actor actor : context.getActors()) {
+                if (actor.getId() == actorIndex) {
+                    newMovie.addCast(actor);
+                    break;
+                }
+            }
         }
         int existId = context.findMovie(newMovie.getId());
         if (existId == -1){
@@ -284,8 +289,8 @@ public class IEMDBSystem {
 
         ArrayList<ActorInfo> movieActors = new ArrayList<>();
         Movie movie = context.getMovies().get(movieIndex);
-        for (int actorId : movie.getCastIds()){
-            movieActors.add(getActor(actorId));
+        for (Actor movieActor : movie.getCast()){
+            movieActors.add(getActor(movieActor.getId()));
         }
         return movieActors;
     }

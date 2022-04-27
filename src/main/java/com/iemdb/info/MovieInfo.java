@@ -1,5 +1,6 @@
 package com.iemdb.info;
 
+import com.iemdb.model.Actor;
 import com.iemdb.model.Comment;
 import com.iemdb.model.Movie;
 import com.iemdb.model.Rate;
@@ -16,14 +17,13 @@ public class MovieInfo {
     private final String coverImage;
     private final Double rating;
     private final ArrayList<String> genres;
-    private final ArrayList<String> cast;
+    private final ArrayList<Actor> cast;
     private final ArrayList<String> writers;
-    private final ArrayList<Integer> castId;
     private final ArrayList<Rate> rates;
     private final double imdbRate;
     private final int ageLimit;
     private final int duration;
-    private final ArrayList<Comment> comments;
+//    private final ArrayList<Comment> comments;
 
 
     public MovieInfo(Movie movie){
@@ -38,12 +38,11 @@ public class MovieInfo {
         genres = movie.getGenres();
         cast = movie.getCast();
         writers = movie.getWriters();
-        castId = movie.getCastIds();
         rates = movie.getRates();
         imdbRate = movie.getImdbRate();
         ageLimit = movie.getAgeLimit();
         duration = movie.getDuration();
-        comments = movie.getComments();
+//        comments = movie.getComments();
     }
 
     public int getId(){return id;}
@@ -53,8 +52,7 @@ public class MovieInfo {
     public String getDirector(){return director;}
     public ArrayList<String> getWriters(){return writers;}
     public ArrayList<String> getGenres(){return genres;}
-    public ArrayList<String> getCast(){return cast;}
-    public ArrayList<Integer> getCastIds(){return castId;}
+    public ArrayList<Actor> getCast(){return cast;}
     public double getImdbRate(){return imdbRate;}
     public int getDuration(){return duration;}
     public int getAgeLimit(){return ageLimit;}
@@ -62,5 +60,5 @@ public class MovieInfo {
     public ArrayList<Rate> getRates(){return rates;}
     public String getImage(){return image;}
     public String getCoverImage(){return coverImage;}
-    public ArrayList<Comment> getMovies(){return comments;}
+//    public ArrayList<Comment> getComments(){return comments;}
 }
