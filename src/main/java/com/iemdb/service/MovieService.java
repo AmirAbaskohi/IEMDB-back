@@ -20,7 +20,7 @@ public class MovieService {
     IEMDBSystem iemdbSystem = IEMDBSystem.getInstance();
 
     @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseInfo> getFiltered(@RequestParam(value = "queryType", required=false) Integer queryType,
+    public ResponseEntity<ResponseInfo> getMovies(@RequestParam(value = "queryType", required=false) Integer queryType,
                                                     @RequestParam(value = "query", required=false) String query,
                                                     @RequestParam(value = "sort", required=false) String sort) {
         ArrayList<MovieInfo> moviesInfo = new ArrayList<>();
@@ -81,6 +81,20 @@ public class MovieService {
         response = new ResponseInfo(moviesInfo, true, "Movies returned successfully.");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @RequestMapping(value = "/{movieId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseInfo> getMovie(@PathVariable(value = "movieId") int movieId) {
+        try {
+            MovieInfo movieInfo = new MovieInfo(iemdbSystem.getMovieById(movieId));
+            ResponseInfo response = new ResponseInfo(movieInfo, true, "Movie returned successfully.");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (NotFoundException e){
+            ResponseInfo response = new ResponseInfo(null, true, "Movie not found.");
+            response.addError("Movie not found.");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+    }
+
 
     @RequestMapping(value = "/{movieId}/rate", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseInfo> rateMovie(@PathVariable(value = "movieId") int movieId,
