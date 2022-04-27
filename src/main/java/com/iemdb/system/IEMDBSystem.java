@@ -1,6 +1,7 @@
 package com.iemdb.system;
 
 import com.iemdb.data.DataContext;
+import com.iemdb.exception.NotFoundException;
 import com.iemdb.info.AccountInfo;
 import com.iemdb.info.ActorInfo;
 import com.iemdb.model.*;
@@ -49,13 +50,13 @@ public class IEMDBSystem {
         }
     }
 
-    public void addMovie(JSONObject jsonObject){
+    public void addMovie(JSONObject jsonObject) throws NotFoundException{
         Movie newMovie = new Movie(jsonObject);
 
         for(Object actorId: jsonObject.getJSONArray("cast")){
             int actorIndex = context.findActor((Integer) actorId);
             if(actorIndex < 0){
-                throw new RuntimeException("Actor Not Found");
+                throw new NotFoundException("Actor Not Found");
             }
             newMovie.addCast(context.getActors().get(actorIndex).getName());
         }
@@ -79,32 +80,32 @@ public class IEMDBSystem {
         }
     }
 
-    public void addComment(JSONObject jsonObject){
+    public void addComment(JSONObject jsonObject) throws NotFoundException{
         Comment newComment = new Comment(jsonObject);
 
         int userIndex = context.findUser(jsonObject.getString("userEmail"));
         int movieIndex = context.findMovie(jsonObject.getInt("movieId"));
 
         if(userIndex < 0){
-            throw new RuntimeException("UserNotFound");
+            throw new NotFoundException("UserNotFound");
         }
         if(movieIndex < 0){
-            throw new RuntimeException("MovieNotFound");
+            throw new NotFoundException("MovieNotFound");
         }
 
         context.addComment(newComment);
         newComment.setUserNickname(context.getUsers().get(userIndex).getNickname());
     }
 
-    public Rate rateMovie(String userEmail, int movieId, int score){
+    public Rate rateMovie(String userEmail, int movieId, int score) throws NotFoundException{
         int userIndex = context.findUser(userEmail);
         int movieIndex = context.findMovie(movieId);
 
         if(userIndex < 0){
-            throw new RuntimeException("UserNotFound");
+            throw new NotFoundException("UserNotFound");
         }
         if(movieIndex < 0){
-            throw new RuntimeException("MovieNotFound");
+            throw new NotFoundException("MovieNotFound");
         }
         if(score < 1 || score > 10){
             throw new RuntimeException("InvalidRateScore");
@@ -212,10 +213,10 @@ public class IEMDBSystem {
         return context.getMovies();
     }
 
-    public Movie getMovieById(int id){
+    public Movie getMovieById(int id) throws NotFoundException{
         int movieIndex = context.findMovie(id);
         if(movieIndex < 0){
-            throw new RuntimeException("MovieNotFound");
+            throw new NotFoundException("MovieNotFound");
         }
         return context.getMovies().get(movieIndex);
     }
@@ -260,11 +261,11 @@ public class IEMDBSystem {
         return result;
     }
 
-    public ActorInfo getActor(int actorId){
+    public ActorInfo getActor(int actorId) throws NotFoundException{
         int actorIndex = context.findActor(actorId);
 
         if(actorIndex < 0){
-            throw new RuntimeException("Actor not found.");
+            throw new NotFoundException("Actor not found.");
         }
         Actor actor = context.getActors().get(actorIndex);
 
@@ -278,15 +279,10 @@ public class IEMDBSystem {
         return new ActorInfo(actor, actorMovies);
     }
 
-    public JSONObject getMovieActors(JSONObject jsonObject){
-        JSONObject response = new JSONObject();
-        JSONObject actorJsonObject = new JSONObject();
-
-        int movieIndex = context.findMovie(jsonObject.getInt("movieId"));
-        if(movieIndex < 0){
-            response.put("success", false);
-            response.put("com/iemdb", "MovieNotFound");
-            return response;
+    public ArrayList<ActorInfo> getMovieActors(int movieId) throws NotFoundException{
+        int movieIndex = context.findMovie(movieId);
+        if(movieId < 0){
+            throw new NotFoundException("Movie not found.");
         }
 
         ArrayList<ActorInfo> movieActors = new ArrayList<>();
@@ -294,10 +290,7 @@ public class IEMDBSystem {
         for (int actorId : movie.getCastIds()){
             movieActors.add(getActor(actorId));
         }
-
-        response.put("success", true);
-        response.put("com/iemdb", movieActors);
-        return response;
+        return movieActors;
     }
 
     public JSONObject getUser(JSONObject jsonObject){
@@ -432,7 +425,10 @@ public class IEMDBSystem {
         ArrayList<String> response = getResponseFromUrl("http://138.197.181.131:5000/api/v2/movies");
         JSONArray jsonArray = new JSONArray(response.get(0));
         for (Object movieData : jsonArray){
-            addMovie((JSONObject) movieData);
+            try {
+                addMovie((JSONObject) movieData);
+            }
+            catch (Exception ex) {}
         }
     }
 
@@ -448,7 +444,10 @@ public class IEMDBSystem {
         ArrayList<String> response = getResponseFromUrl("http://138.197.181.131:5000/api/comments");
         JSONArray jsonArray = new JSONArray(response.get(0));
         for (Object commentData : jsonArray){
-            addComment((JSONObject) commentData);
+            try {
+                addComment((JSONObject) commentData);
+            }
+            catch (Exception ex) {}
         }
     }
 
@@ -476,7 +475,7 @@ public class IEMDBSystem {
 
     public String getCurrentUser(){return currentUser;}
 
-    public AccountInfo login(String email, String password) {
+    public AccountInfo login(String email, String password) throws NotFoundException{
         ArrayList<User> users = context.getUsers();
         User foundedUser = null;
         for (User user: users) {
@@ -486,7 +485,7 @@ public class IEMDBSystem {
             }
         }
         if (foundedUser == null) {
-            throw new RuntimeException("UserNotFound");
+            throw new NotFoundException("UserNotFound");
         }
         if (!foundedUser.getPassword().equals(password)) {
             throw new RuntimeException("UserNameOrPasswordWrong");

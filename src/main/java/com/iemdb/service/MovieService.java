@@ -1,5 +1,7 @@
 package com.iemdb.service;
 
+import com.iemdb.exception.NotFoundException;
+import com.iemdb.info.ActorInfo;
 import com.iemdb.info.MovieInfo;
 import com.iemdb.info.ResponseInfo;
 import com.iemdb.model.Movie;
@@ -87,10 +89,29 @@ public class MovieService {
             Rate rate = iemdbSystem.rateMovie(iemdbSystem.getCurrentUser(), movieId, score);
             ResponseInfo response = new ResponseInfo(rate,true, "Movie rated successfully.");
             return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
-        }catch (Exception e){
+        }
+        catch (NotFoundException ex) {
+            ResponseInfo response = new ResponseInfo(null, false, "Movie not found.");
+            response.addError(ex.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+        catch (RuntimeException ex){
             ResponseInfo response = new ResponseInfo(null, false, "Movie rating failed.");
-            response.addError(e.getMessage());
+            response.addError(ex.getMessage());
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @RequestMapping(value = "/{movieId}/actors", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseInfo> getMovieActors(@PathVariable(value = "movieId") int movieId) {
+        try {
+            ArrayList<ActorInfo> movieActors = iemdbSystem.getMovieActors(movieId);
+            ResponseInfo response = new ResponseInfo(movieActors,true, "Movie actors returned successfully.");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (NotFoundException e){
+            ResponseInfo response = new ResponseInfo(null, false, "Movie not found.");
+            response.addError(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
 }
