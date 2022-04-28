@@ -7,10 +7,10 @@ public class Vote {
     private int commentId;
     private int vote;
 
-    public Vote(JSONObject jsonObject){
-        userEmail = jsonObject.getString("userEmail");
-        commentId = jsonObject.getInt("commentId");
-        vote = jsonObject.getInt("vote");
+    public Vote(String _userEmail, int _commentId, int _vote){
+        userEmail = _userEmail;
+        commentId = _commentId;
+        vote = _vote;
     }
 
     public void update(Vote _vote){

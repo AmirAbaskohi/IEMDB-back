@@ -1,6 +1,7 @@
 package com.iemdb.system;
 
 import com.iemdb.data.DataContext;
+import com.iemdb.exception.ForbiddenException;
 import com.iemdb.exception.NotFoundException;
 import com.iemdb.info.AccountInfo;
 import com.iemdb.info.ActorInfo;
@@ -119,96 +120,62 @@ public class IEMDBSystem {
         return newRate;
     }
 
-    public JSONObject voteComment(JSONObject jsonObject){
-        JSONObject response = new JSONObject();
-
-
-        int userIndex = context.findUser(jsonObject.getString("userEmail"));
-        int commentIndex = context.findComment(jsonObject.getInt("commentId"));
+    public Vote voteComment(String userEmail, int commentId, int vote) throws NotFoundException{
+        int userIndex = context.findUser(userEmail);
+        int commentIndex = context.findComment(commentId);
 
         if(userIndex < 0){
-            response.put("success", false);
-            response.put("com/iemdb", "UserNotFound");
-            return response;
+            throw new NotFoundException("User not found.");
         }
         if(commentIndex < 0){
-            response.put("success", false);
-            response.put("com/iemdb", "CommentNotFound");
-            return response;
+            throw new NotFoundException("Comment not found.");
         }
-        if(!(jsonObject.get("vote") instanceof Integer) || !(jsonObject.getInt("vote") == 1 |
-                jsonObject.getInt("vote") == -1)){
-            response.put("success", false);
-            response.put("com/iemdb", "InvalidVoteValue");
-            return response;
+        if(vote != -1 && vote != 1){
+            throw new RuntimeException("Invalid vote value.");
         }
 
-        Vote newVote = new Vote(jsonObject);
+        Vote newVote = new Vote(userEmail, commentId, vote);
         context.getComments().get(commentIndex).addVote(newVote);
-        response.put("success", true);
-        response.put("com/iemdb", "comment voted successfully");
-        return response;
+        return newVote;
     }
 
-    public JSONObject addToWatchList(JSONObject jsonObject){
-        JSONObject response = new JSONObject();
-
-        int userIndex = context.findUser(jsonObject.getString("userEmail"));
-        int movieIndex = context.findMovie(jsonObject.getInt("movieId"));
+    public Movie addToWatchList(String userEmail, int movieId) throws NotFoundException, ForbiddenException {
+        int userIndex = context.findUser(userEmail);
+        int movieIndex = context.findMovie(movieId);
         if(userIndex < 0){
-            response.put("success", false);
-            response.put("com/iemdb", "UserNotFound");
-            return response;
+            throw new NotFoundException("User not found.");
         }
         if(movieIndex < 0){
-            response.put("success", false);
-            response.put("com/iemdb", "MovieNotFound");
-            return response;
+            throw new NotFoundException("Movie not found.");
         }
         User user = context.getUsers().get(userIndex);
         Movie movie = context.getMovies().get(movieIndex);
 
         if(user.hasMovieInWatchList(movie.getId())){
-            response.put("success", false);
-            response.put("com/iemdb", "MovieAlreadyExists");
-            return response;
+            throw new RuntimeException("Movie already exists.");
         }
 
         if(!movie.hasPermissionToWatch(user.getBirthDate().getYear())){
-            response.put("success", false);
-            response.put("com/iemdb", "AgeLimitError");
-            return response;
+            throw new ForbiddenException("Age is not enough.");
         }
 
         user.addMovie(movie);
-
-        response.put("success", true);
-        response.put("com/iemdb", "movie added to watchlist successfully");
-        return response;
+        return movie;
     }
 
-    public JSONObject removeFromWatchList(JSONObject jsonObject){
-        JSONObject response = new JSONObject();
-
-        int userIndex = context.findUser(jsonObject.getString("userEmail"));
+    public Movie removeFromWatchList(String userEmail, int movieId) throws NotFoundException {
+        int userIndex = context.findUser(userEmail);
         if(userIndex < 0){
-            response.put("success", false);
-            response.put("com/iemdb", "UserNotFound");
-            return response;
+            throw new NotFoundException("User not found.");
         }
         User user = context.getUsers().get(userIndex);
 
-        if(!user.hasMovieInWatchList(jsonObject.getInt("movieId"))){
-            response.put("success", false);
-            response.put("com/iemdb", "MovieNotFound");
-            return response;
+        if(!user.hasMovieInWatchList(movieId)){
+            throw new NotFoundException("Movie does not exist in the watchlist.");
         }
 
-        user.removeMovie(jsonObject.getInt("movieId"));
-
-        response.put("success", true);
-        response.put("com/iemdb", "movie removed from watchlist successfully");
-        return response;
+        user.removeMovie(movieId);
+        return getMovieById(movieId);
     }
 
     public ArrayList<Movie> getMoviesList(){
