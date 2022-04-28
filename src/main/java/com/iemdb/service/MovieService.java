@@ -95,7 +95,15 @@ public class MovieService {
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
         try {
-            MovieInfo movieInfo = new MovieInfo(iemdbSystem.getMovieById(movieId));
+            Movie selectedMovie = iemdbSystem.getMovieById(movieId);
+            ArrayList<Movie> watchlist = iemdbSystem.getWatchList(iemdbSystem.getCurrentUser());
+            boolean existsInWatchlist = false;
+            for (Movie movie : watchlist)
+                if (movie.getId() == selectedMovie.getId()) {
+                    existsInWatchlist = true;
+                    break;
+                }
+            MovieInfo movieInfo = new MovieInfo(selectedMovie, existsInWatchlist);
             ResponseInfo response = new ResponseInfo(movieInfo, true, "Movie returned successfully.");
             return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (NotFoundException e){

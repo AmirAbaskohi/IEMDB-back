@@ -54,7 +54,7 @@ public class UserService {
             ArrayList<Movie> movies = iemdbSystem.getWatchList(iemdbSystem.getCurrentUser());
             ArrayList<MovieInfo> moviesInfo = new ArrayList<>();
             for (Movie movie : movies)
-                moviesInfo.add(new MovieInfo(movie));
+                moviesInfo.add(new MovieInfo(movie, true));
             ResponseInfo response = new ResponseInfo(moviesInfo, true, "Watchlist returned successfully.");
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
@@ -75,7 +75,7 @@ public class UserService {
         }
         try {
             Movie movie = iemdbSystem.addToWatchList(iemdbSystem.getCurrentUser(), movieId);
-            ResponseInfo response = new ResponseInfo(new MovieInfo(movie), true, "Movie added to watchlist successfully.");
+            ResponseInfo response = new ResponseInfo(new MovieInfo(movie, true), true, "Movie added to watchlist successfully.");
             return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
         }
         catch (NotFoundException ex) {
@@ -99,7 +99,7 @@ public class UserService {
     public ResponseEntity<ResponseInfo> removeFromWatchlist(@RequestParam(value = "movieId") int movieId) {
         try {
             Movie movie = iemdbSystem.removeFromWatchList(iemdbSystem.getCurrentUser(), movieId);
-            ResponseInfo response = new ResponseInfo(new MovieInfo(movie), true, "Movie removed from watchlist successfully.");
+            ResponseInfo response = new ResponseInfo(new MovieInfo(movie, false), true, "Movie removed from watchlist successfully.");
             return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
         }
         catch (NotFoundException ex) {

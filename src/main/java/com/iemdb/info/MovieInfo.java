@@ -19,9 +19,10 @@ public class MovieInfo {
     private final double imdbRate;
     private final int ageLimit;
     private final int duration;
+    private final boolean existsInWatchlist;
 
 
-    public MovieInfo(Movie movie){
+    public MovieInfo(Movie movie, boolean _existsInWatchlist){
         id = movie.getId();
         name = movie.getName();
         summary = movie.getSummary();
@@ -36,6 +37,7 @@ public class MovieInfo {
         imdbRate = movie.getImdbRate();
         ageLimit = movie.getAgeLimit();
         duration = movie.getDuration();
+        existsInWatchlist = _existsInWatchlist;
     }
 
     public int getId(){return id;}
@@ -52,4 +54,5 @@ public class MovieInfo {
     public String getImage(){return image;}
     public String getCoverImage(){return coverImage;}
     public int getNumberOfRates(){return numberOfRates;}
+    public boolean isExistsInWatchlist(){return existsInWatchlist;}
 }
