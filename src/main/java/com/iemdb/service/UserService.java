@@ -1,5 +1,7 @@
 package com.iemdb.service;
 
+import com.iemdb.exception.ForbiddenException;
+import com.iemdb.exception.InvalidValueException;
 import com.iemdb.exception.NotFoundException;
 import com.iemdb.info.AccountInfo;
 import com.iemdb.info.ResponseInfo;
@@ -9,10 +11,7 @@ import com.iemdb.system.IEMDBSystem;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 
@@ -46,6 +45,30 @@ public class UserService {
             ResponseInfo response = new ResponseInfo(null, false, "User not found.");
             response.addError(ex.getMessage());
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @RequestMapping(value = "/watchlist", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseInfo> addToWatchlist(@RequestParam(value = "movieId") int movieId) {
+        try {
+            Movie movie = iemdbSystem.addToWatchList(iemdbSystem.getCurrentUser(), movieId);
+            ResponseInfo response = new ResponseInfo(movie, true, "Movie added to watchlist successfully.");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        catch (NotFoundException ex) {
+            ResponseInfo response = new ResponseInfo(null, false, ex.getMessage());
+            response.addError(ex.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+        catch (ForbiddenException ex) {
+            ResponseInfo response = new ResponseInfo(null, false, ex.getMessage());
+            response.addError(ex.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+        }
+        catch (InvalidValueException ex) {
+            ResponseInfo response = new ResponseInfo(null, false, ex.getMessage());
+            response.addError(ex.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
 
