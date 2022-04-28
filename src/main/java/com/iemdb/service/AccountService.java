@@ -42,6 +42,12 @@ public class AccountService {
 
     @RequestMapping(value = "/logout", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseInfo> logout() {
+        if (iemdbSystem.getCurrentUser() == null ||
+                iemdbSystem.getCurrentUser().isBlank() ||
+                iemdbSystem.getCurrentUser().isEmpty()) {
+            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
         ResponseInfo response = new ResponseInfo(null, true, "Logged out successfully.");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

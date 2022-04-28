@@ -26,7 +26,7 @@ public class ActorService {
                 iemdbSystem.getCurrentUser().isBlank() ||
                 iemdbSystem.getCurrentUser().isEmpty()) {
             ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
 
         try {
@@ -46,7 +46,7 @@ public class ActorService {
                 iemdbSystem.getCurrentUser().isBlank() ||
                 iemdbSystem.getCurrentUser().isEmpty()) {
             ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
         try {
             ArrayList<Movie> actorMovies = iemdbSystem.getMoviesByActor(actorId);

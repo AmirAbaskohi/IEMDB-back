@@ -22,6 +22,12 @@ public class UserService {
 
     @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseInfo> getUser() {
+        if (iemdbSystem.getCurrentUser() == null ||
+                iemdbSystem.getCurrentUser().isBlank() ||
+                iemdbSystem.getCurrentUser().isEmpty()) {
+            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
         try {
             User user = iemdbSystem.getUser(iemdbSystem.getCurrentUser());
             ResponseInfo response = new ResponseInfo(user, true, "User returned successfully.");
@@ -36,6 +42,12 @@ public class UserService {
 
     @RequestMapping(value = "/watchlist", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseInfo> getWatchlist() {
+        if (iemdbSystem.getCurrentUser() == null ||
+                iemdbSystem.getCurrentUser().isBlank() ||
+                iemdbSystem.getCurrentUser().isEmpty()) {
+            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
         try {
             ArrayList<Movie> movies = iemdbSystem.getWatchList(iemdbSystem.getCurrentUser());
             ResponseInfo response = new ResponseInfo(movies, true, "Watchlist returned successfully.");
@@ -50,6 +62,12 @@ public class UserService {
 
     @RequestMapping(value = "/watchlist", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseInfo> addToWatchlist(@RequestParam(value = "movieId") int movieId) {
+        if (iemdbSystem.getCurrentUser() == null ||
+                iemdbSystem.getCurrentUser().isBlank() ||
+                iemdbSystem.getCurrentUser().isEmpty()) {
+            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
         try {
             Movie movie = iemdbSystem.addToWatchList(iemdbSystem.getCurrentUser(), movieId);
             ResponseInfo response = new ResponseInfo(movie, true, "Movie added to watchlist successfully.");

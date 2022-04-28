@@ -18,6 +18,12 @@ public class CommentService {
 
     @RequestMapping(value = "", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseInfo> addComment(@RequestBody CommentForm commentForm) {
+        if (iemdbSystem.getCurrentUser() == null ||
+                iemdbSystem.getCurrentUser().isBlank() ||
+                iemdbSystem.getCurrentUser().isEmpty()) {
+            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
         ResponseInfo response = new ResponseInfo();
         try {
             Comment newComment = iemdbSystem.addComment(iemdbSystem.getCurrentUser(), commentForm.getText(), commentForm.getMovieId());
@@ -37,6 +43,12 @@ public class CommentService {
     @RequestMapping(value = "/{commentId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseInfo> voteComment(@PathVariable(value = "commentId") int commentId,
                                                    @PathVariable(value = "vote") int vote) {
+        if (iemdbSystem.getCurrentUser() == null ||
+                iemdbSystem.getCurrentUser().isBlank() ||
+                iemdbSystem.getCurrentUser().isEmpty()) {
+            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
         ResponseInfo response = new ResponseInfo();
         try {
             Comment comment = iemdbSystem.voteComment(iemdbSystem.getCurrentUser(), commentId, vote);

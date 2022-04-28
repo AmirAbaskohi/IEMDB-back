@@ -24,6 +24,12 @@ public class MovieService {
     public ResponseEntity<ResponseInfo> getMovies(@RequestParam(value = "queryType", required=false) Integer queryType,
                                                     @RequestParam(value = "query", required=false) String query,
                                                     @RequestParam(value = "sort", required=false) String sort) {
+        if (iemdbSystem.getCurrentUser() == null ||
+                iemdbSystem.getCurrentUser().isBlank() ||
+                iemdbSystem.getCurrentUser().isEmpty()) {
+            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
         ArrayList<MovieInfo> moviesInfo = new ArrayList<>();
         ArrayList<Movie> movies = iemdbSystem.getMoviesList();
         ResponseInfo response = new ResponseInfo();
@@ -85,6 +91,12 @@ public class MovieService {
 
     @RequestMapping(value = "/{movieId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseInfo> getMovie(@PathVariable(value = "movieId") int movieId) {
+        if (iemdbSystem.getCurrentUser() == null ||
+                iemdbSystem.getCurrentUser().isBlank() ||
+                iemdbSystem.getCurrentUser().isEmpty()) {
+            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
         try {
             MovieInfo movieInfo = new MovieInfo(iemdbSystem.getMovieById(movieId));
             ResponseInfo response = new ResponseInfo(movieInfo, true, "Movie returned successfully.");
@@ -100,6 +112,12 @@ public class MovieService {
     @RequestMapping(value = "/{movieId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseInfo> rateMovie(@PathVariable(value = "movieId") int movieId,
                                                 @RequestParam(value = "score") int score) {
+        if (iemdbSystem.getCurrentUser() == null ||
+                iemdbSystem.getCurrentUser().isBlank() ||
+                iemdbSystem.getCurrentUser().isEmpty()) {
+            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
         try {
             Rate rate = iemdbSystem.rateMovie(iemdbSystem.getCurrentUser(), movieId, score);
             ResponseInfo response = new ResponseInfo(rate,true, "Movie rated successfully.");
@@ -119,6 +137,12 @@ public class MovieService {
 
     @RequestMapping(value = "/{movieId}/actors", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseInfo> getMovieActors(@PathVariable(value = "movieId") int movieId) {
+        if (iemdbSystem.getCurrentUser() == null ||
+                iemdbSystem.getCurrentUser().isBlank() ||
+                iemdbSystem.getCurrentUser().isEmpty()) {
+            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
         try {
             ArrayList<ActorInfo> movieActors = iemdbSystem.getMovieActors(movieId);
             ResponseInfo response = new ResponseInfo(movieActors,true, "Movie actors returned successfully.");
@@ -132,6 +156,12 @@ public class MovieService {
 
     @RequestMapping(value = "/{movieId}/comments", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseInfo> getMovieComments(@PathVariable(value = "movieId") int movieId) {
+        if (iemdbSystem.getCurrentUser() == null ||
+                iemdbSystem.getCurrentUser().isBlank() ||
+                iemdbSystem.getCurrentUser().isEmpty()) {
+            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
         try {
             ArrayList<Comment> movieComments = iemdbSystem.getMovieComments(movieId);
             ResponseInfo response = new ResponseInfo(movieComments,true, "Movie comments returned successfully.");
