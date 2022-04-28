@@ -12,9 +12,8 @@ public class ActorInfo {
     private final String birthDate;
     private final String nationality;
     private final String image;
-    private ArrayList<AbstractMovieInfo> movies;
-    private int age;
-    private int numberOfMovies;
+    private final int age;
+    private final int numberOfMovies;
 
     public ActorInfo(Actor actor, ArrayList<Movie> actorMovies){
         id = actor.getId();
@@ -22,12 +21,8 @@ public class ActorInfo {
         birthDate = actor.getBirthDate();
         nationality = actor.getNationality();
         image = actor.getImage();
-
-        movies = new ArrayList<AbstractMovieInfo>();
-        for (Movie movie : actorMovies)
-            movies.add(new AbstractMovieInfo(movie));
         age = LocalDate.now().getYear() - Integer.parseInt(birthDate.split(", ", 2)[1]);
-        numberOfMovies = movies.size();
+        numberOfMovies = actorMovies.size();
     }
 
     public int getId() { return id; }
@@ -35,6 +30,6 @@ public class ActorInfo {
     public String getBirthDate() { return birthDate; }
     public String getNationality() { return nationality; }
     public String getImage() { return image; }
-    public ArrayList<AbstractMovieInfo> getMovies() { return movies; }
     public int getAge() {return age;}
+    public int getNumberOfMovies() {return numberOfMovies;}
 }

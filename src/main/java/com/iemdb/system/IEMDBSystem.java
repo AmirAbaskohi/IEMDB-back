@@ -4,6 +4,8 @@ import com.iemdb.data.DataContext;
 import com.iemdb.exception.ForbiddenException;
 import com.iemdb.exception.InvalidValueException;
 import com.iemdb.exception.NotFoundException;
+import com.iemdb.info.AbstractActorInfo;
+import com.iemdb.info.AbstractMovieInfo;
 import com.iemdb.info.AccountInfo;
 import com.iemdb.info.ActorInfo;
 import com.iemdb.model.*;
@@ -201,17 +203,17 @@ public class IEMDBSystem {
         return result;
     }
 
-    public ArrayList<Movie> getMoviesByActor(int actorId) throws NotFoundException{
+    public ArrayList<AbstractMovieInfo> getMoviesByActor(int actorId) throws NotFoundException{
         int actorIndex = context.findActor(actorId);
 
         if(actorIndex < 0){
             throw new NotFoundException("Actor not found.");
         }
 
-        ArrayList<Movie> result = new ArrayList<>();
+        ArrayList<AbstractMovieInfo> result = new ArrayList<>();
         for (Movie movie: context.getMovies()){
             if(movie.hasActor(actorId)){
-                result.add(movie);
+                result.add(new AbstractMovieInfo(movie));
             }
         }
         return result;
@@ -255,16 +257,16 @@ public class IEMDBSystem {
         return new ActorInfo(actor, actorMovies);
     }
 
-    public ArrayList<ActorInfo> getMovieActors(int movieId) throws NotFoundException{
+    public ArrayList<AbstractActorInfo> getMovieActors(int movieId) throws NotFoundException{
         int movieIndex = context.findMovie(movieId);
         if(movieId < 0){
             throw new NotFoundException("Movie not found.");
         }
 
-        ArrayList<ActorInfo> movieActors = new ArrayList<>();
+        ArrayList<AbstractActorInfo> movieActors = new ArrayList<>();
         Movie movie = context.getMovies().get(movieIndex);
         for (Actor movieActor : movie.getCast()){
-            movieActors.add(getActor(movieActor.getId()));
+            movieActors.add(new AbstractActorInfo(movieActor));
         }
         return movieActors;
     }

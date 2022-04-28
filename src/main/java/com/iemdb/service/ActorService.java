@@ -1,6 +1,7 @@
 package com.iemdb.service;
 
 import com.iemdb.exception.NotFoundException;
+import com.iemdb.info.AbstractMovieInfo;
 import com.iemdb.info.ActorInfo;
 import com.iemdb.info.ResponseInfo;
 import com.iemdb.model.Movie;
@@ -49,7 +50,7 @@ public class ActorService {
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
         try {
-            ArrayList<Movie> actorMovies = iemdbSystem.getMoviesByActor(actorId);
+            ArrayList<AbstractMovieInfo> actorMovies = iemdbSystem.getMoviesByActor(actorId);
             ResponseInfo response = new ResponseInfo(actorMovies, true, "Actor movies returned successfully.");
             return new ResponseEntity<>(response, HttpStatus.OK);
         }

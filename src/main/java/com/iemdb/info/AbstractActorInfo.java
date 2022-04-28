@@ -13,7 +13,7 @@ public class AbstractActorInfo {
     private int age;
     private final String birthDate;
 
-    public AbstractActorInfo(Actor actor, ArrayList<Movie> actorMovies){
+    public AbstractActorInfo(Actor actor){
         id = actor.getId();
         name = actor.getName();
         image = actor.getImage();

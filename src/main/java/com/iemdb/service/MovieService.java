@@ -1,9 +1,7 @@
 package com.iemdb.service;
 
 import com.iemdb.exception.NotFoundException;
-import com.iemdb.info.ActorInfo;
-import com.iemdb.info.MovieInfo;
-import com.iemdb.info.ResponseInfo;
+import com.iemdb.info.*;
 import com.iemdb.model.Comment;
 import com.iemdb.model.Movie;
 import com.iemdb.model.Rate;
@@ -30,7 +28,7 @@ public class MovieService {
             ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
-        ArrayList<MovieInfo> moviesInfo = new ArrayList<>();
+        ArrayList<AbstractMovieInfo> abstractMoviesInfo = new ArrayList<>();
         ArrayList<Movie> movies = iemdbSystem.getMoviesList();
         ResponseInfo response = new ResponseInfo();
 
@@ -81,11 +79,10 @@ public class MovieService {
                                       iemdbSystem.sortMoviesByImdbRate(movies) ;
 
         for(Movie movie : movies){
-            MovieInfo movieInfo = new MovieInfo(movie);
-            moviesInfo.add(movieInfo);
+            abstractMoviesInfo.add(new AbstractMovieInfo(movie));
         }
 
-        response = new ResponseInfo(moviesInfo, true, "Movies returned successfully.");
+        response = new ResponseInfo(abstractMoviesInfo, true, "Movies returned successfully.");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -120,7 +117,7 @@ public class MovieService {
         }
         try {
             Rate rate = iemdbSystem.rateMovie(iemdbSystem.getCurrentUser(), movieId, score);
-            ResponseInfo response = new ResponseInfo(rate,true, "Movie rated successfully.");
+            ResponseInfo response = new ResponseInfo(new MovieRateInfo(iemdbSystem.getMovieById(movieId)),true, "Movie rated successfully.");
             return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
         }
         catch (NotFoundException ex) {
@@ -144,7 +141,7 @@ public class MovieService {
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
         try {
-            ArrayList<ActorInfo> movieActors = iemdbSystem.getMovieActors(movieId);
+            ArrayList<AbstractActorInfo> movieActors = iemdbSystem.getMovieActors(movieId);
             ResponseInfo response = new ResponseInfo(movieActors,true, "Movie actors returned successfully.");
             return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (NotFoundException e){
