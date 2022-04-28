@@ -12,7 +12,7 @@ public class ActorInfo {
     private final String birthDate;
     private final String nationality;
     private final String image;
-    private final int age;
+    private int age;
     private final int numberOfMovies;
 
     public ActorInfo(Actor actor, ArrayList<Movie> actorMovies){
@@ -21,7 +21,12 @@ public class ActorInfo {
         birthDate = actor.getBirthDate();
         nationality = actor.getNationality();
         image = actor.getImage();
-        age = LocalDate.now().getYear() - Integer.parseInt(birthDate.split(", ", 2)[1]);
+        try {
+            age = LocalDate.now().getYear() - Integer.parseInt(birthDate.split(", ", 2)[1]);
+        }
+        catch (Exception ex) {
+            age = -1;
+        }
         numberOfMovies = actorMovies.size();
     }
 
