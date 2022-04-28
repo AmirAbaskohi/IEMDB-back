@@ -72,6 +72,20 @@ public class UserService {
         }
     }
 
+    @RequestMapping(value = "/watchlist", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseInfo> removeFromWatchlist(@RequestParam(value = "movieId") int movieId) {
+        try {
+            Movie movie = iemdbSystem.removeFromWatchList(iemdbSystem.getCurrentUser(), movieId);
+            ResponseInfo response = new ResponseInfo(movie, true, "Movie removed from watchlist successfully.");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        catch (NotFoundException ex) {
+            ResponseInfo response = new ResponseInfo(null, false, ex.getMessage());
+            response.addError(ex.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+    }
+
     @RequestMapping(value = "/recommendationList", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseInfo> getRecommendationList() {
         try {
