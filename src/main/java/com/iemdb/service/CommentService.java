@@ -24,7 +24,7 @@ public class CommentService {
             response.setMessage("Comment added successfully.");
             response.setSuccess(true);
             response.setValue(newComment);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
         }
         catch (NotFoundException ex) {
             response.addError(ex.getMessage());
@@ -43,7 +43,7 @@ public class CommentService {
             response.setMessage("Comment voted successfully.");
             response.setSuccess(true);
             response.setValue(comment);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
         }
         catch (NotFoundException ex) {
             response.addError(ex.getMessage());

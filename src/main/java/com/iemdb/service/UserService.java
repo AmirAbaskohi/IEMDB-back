@@ -53,7 +53,7 @@ public class UserService {
         try {
             Movie movie = iemdbSystem.addToWatchList(iemdbSystem.getCurrentUser(), movieId);
             ResponseInfo response = new ResponseInfo(movie, true, "Movie added to watchlist successfully.");
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
         }
         catch (NotFoundException ex) {
             ResponseInfo response = new ResponseInfo(null, false, ex.getMessage());
@@ -77,7 +77,7 @@ public class UserService {
         try {
             Movie movie = iemdbSystem.removeFromWatchList(iemdbSystem.getCurrentUser(), movieId);
             ResponseInfo response = new ResponseInfo(movie, true, "Movie removed from watchlist successfully.");
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
         }
         catch (NotFoundException ex) {
             ResponseInfo response = new ResponseInfo(null, false, ex.getMessage());

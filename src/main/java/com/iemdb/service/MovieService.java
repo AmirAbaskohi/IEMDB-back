@@ -50,9 +50,9 @@ public class MovieService {
         }
         if (queryType != null && queryType == 3 && query != null) {
             try {
-                String[] splittedQuery = query.split("-", 2);
-                int start = Integer.parseInt(splittedQuery[0]);
-                int end = Integer.parseInt(splittedQuery[1]);
+                String[] splitQuery = query.split("-", 2);
+                int start = Integer.parseInt(splitQuery[0]);
+                int end = Integer.parseInt(splitQuery[1]);
             }
             catch (Exception ex) {
                 response.setSuccess(false);
@@ -71,7 +71,7 @@ public class MovieService {
                                                                           Integer.parseInt(query.split("-", 2)[1]));
 
         if (sort != null)
-            movies = sort == "date" ? iemdbSystem.sortMoviesByReleaseDate(movies) :
+            movies = sort.equals("date") ? iemdbSystem.sortMoviesByReleaseDate(movies) :
                                       iemdbSystem.sortMoviesByImdbRate(movies) ;
 
         for(Movie movie : movies){

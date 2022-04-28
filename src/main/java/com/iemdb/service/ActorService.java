@@ -22,6 +22,13 @@ public class ActorService {
 
     @RequestMapping(value = "/{actorId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseInfo> getActor(@PathVariable(value = "actorId") int actorId) {
+        if (iemdbSystem.getCurrentUser() == null ||
+                iemdbSystem.getCurrentUser().isBlank() ||
+                iemdbSystem.getCurrentUser().isEmpty()) {
+            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+
         try {
             ActorInfo actorInfo = iemdbSystem.getActor(actorId);
             ResponseInfo response = new ResponseInfo(actorInfo, true, "Actor returned successfully.");
@@ -35,6 +42,12 @@ public class ActorService {
 
     @RequestMapping(value = "/{actorId}/movies", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseInfo> getActorMovies(@PathVariable(value = "actorId") int actorId) {
+        if (iemdbSystem.getCurrentUser() == null ||
+                iemdbSystem.getCurrentUser().isBlank() ||
+                iemdbSystem.getCurrentUser().isEmpty()) {
+            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
         try {
             ArrayList<Movie> actorMovies = iemdbSystem.getMoviesByActor(actorId);
             ResponseInfo response = new ResponseInfo(actorMovies, true, "Actor movies returned successfully.");
