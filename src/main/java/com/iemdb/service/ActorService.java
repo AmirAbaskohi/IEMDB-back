@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 
 @RestController
-@RequestMapping(value = "/actor")
+@RequestMapping(value = "/actors")
 public class ActorService {
     IEMDBSystem iemdbSystem = IEMDBSystem.getInstance();
 
