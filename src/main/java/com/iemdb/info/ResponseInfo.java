@@ -52,5 +52,5 @@ public class ResponseInfo {
     public void setSuccess(boolean _success) { success = _success; }
     public void setMessage(String _message) { message = _message; }
     public void setErrors(ArrayList<String> _errors) { errors = _errors; }
-    public void setValue(Object _value) { _value = value; }
+    public void setValue(Object _value) { value = _value; }
 }

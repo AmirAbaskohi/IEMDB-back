@@ -42,7 +42,7 @@ public class CommentService {
 
     @RequestMapping(value = "/{commentId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseInfo> voteComment(@PathVariable(value = "commentId") int commentId,
-                                                   @PathVariable(value = "vote") int vote) {
+                                                   @RequestParam(value = "vote") int vote) {
         if (iemdbSystem.getCurrentUser() == null ||
                 iemdbSystem.getCurrentUser().isBlank() ||
                 iemdbSystem.getCurrentUser().isEmpty()) {

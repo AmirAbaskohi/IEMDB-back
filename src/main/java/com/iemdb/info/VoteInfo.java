@@ -5,10 +5,9 @@ public class VoteInfo {
     private int dislikes;
     private int neutrals;
 
-    public VoteInfo(int _likes, int _dislikes, int _neutrals) {
+    public VoteInfo(int _likes, int _dislikes) {
         likes = _likes;
         dislikes = _dislikes;
-        neutrals = _neutrals;
     }
 
     public int getLikes() {return likes;}

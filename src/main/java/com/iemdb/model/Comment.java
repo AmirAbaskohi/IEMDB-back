@@ -47,17 +47,14 @@ public class Comment {
 
     public VoteInfo getVotes(){
         int numOfLikes = 0;
-        int numOfNeutrals = 0;
         int numOfDislikes = 0;
         for (Vote vote: votes){
             if(vote.getVote() == 1)
                 numOfLikes++;
-            if(vote.getVote() == 0)
-                numOfNeutrals++;
             if(vote.getVote() == -1)
                 numOfDislikes++;
         }
-        return new VoteInfo(numOfLikes, numOfDislikes, numOfNeutrals);
+        return new VoteInfo(numOfLikes, numOfDislikes);
     }
 
     public void setId(int _id){id = _id;}
