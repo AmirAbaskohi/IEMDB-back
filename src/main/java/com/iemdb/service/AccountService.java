@@ -21,28 +21,28 @@ public class AccountService {
     public ResponseEntity<ResponseInfo> getCurrentUser() {
         AccountInfo accountInfo = new AccountInfo(iemdbSystem.getCurrentUser());
         boolean isLoggedIn = accountInfo.getIsLoggedIn();
-        ResponseInfo response = new ResponseInfo(accountInfo, isLoggedIn ? true : false, "Current user returned successfully.");
-        return new ResponseEntity(response, HttpStatus.OK);
+        ResponseInfo response = new ResponseInfo(accountInfo, isLoggedIn, "Current user returned successfully.");
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AccountInfo> login(@RequestParam(value = "email") String email,
+    public ResponseEntity<ResponseInfo> login(@RequestParam(value = "email") String email,
                                              @RequestParam(value = "password") String password) {
         try{
             AccountInfo account = iemdbSystem.login(email, password);
             ResponseInfo response = new ResponseInfo(account, true, "Logged in successfully.");
-            return new ResponseEntity(response, HttpStatus.OK);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }
         catch (Exception ex) {
             ResponseInfo response = new ResponseInfo(null, false, "Logging in failed.");
             response.addError(ex.getMessage());
-            return new ResponseEntity(response, HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseInfo> login() {
+    public ResponseEntity<ResponseInfo> logout() {
         ResponseInfo response = new ResponseInfo(null, true, "Logged out successfully.");
-        return new ResponseEntity(response, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

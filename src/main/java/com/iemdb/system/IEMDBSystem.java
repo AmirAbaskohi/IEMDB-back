@@ -310,26 +310,12 @@ public class IEMDBSystem {
         return movie.getComments();
     }
 
-    public JSONObject getUser(JSONObject jsonObject){
-        JSONObject response = new JSONObject();
-        JSONObject userJsonObject = new JSONObject();
-
-        String userEmail = jsonObject.getString("userEmail");
+    public User getUser(String userEmail) throws NotFoundException{
         int userIndex = context.findUser(userEmail);
         if(userIndex < 0 ){
-            response.put("success", false);
-            response.put("com/iemdb", "UserNotFound");
-            return response;
+            throw new NotFoundException("User Not Found.");
         }
-        User user = context.getUsers().get(userIndex);
-
-        userJsonObject.put("name", user.getName());
-        userJsonObject.put("nickname", user.getNickname());
-        userJsonObject.put("userEmail", user.getEmail());
-
-        response.put("success", true);
-        response.put("com/iemdb", userJsonObject);
-        return response;
+        return context.getUsers().get(userIndex);
     }
 
 //    public JSONObject getWatchList(JSONObject jsonObject){
