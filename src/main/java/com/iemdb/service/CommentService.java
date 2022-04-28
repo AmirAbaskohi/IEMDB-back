@@ -1,5 +1,6 @@
 package com.iemdb.service;
 
+import com.iemdb.exception.InvalidValueException;
 import com.iemdb.exception.NotFoundException;
 import com.iemdb.form.CommentForm;
 import com.iemdb.info.ResponseInfo;
@@ -30,6 +31,31 @@ public class CommentService {
             response.setMessage(ex.getMessage());
             response.setSuccess(false);
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @RequestMapping(value = "/{commentId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseInfo> voteComment(@PathVariable(value = "commentId") int commentId,
+                                                   @PathVariable(value = "vote") int vote) {
+        ResponseInfo response = new ResponseInfo();
+        try {
+            Comment comment = iemdbSystem.voteComment(iemdbSystem.getCurrentUser(), commentId, vote);
+            response.setMessage("Comment voted successfully.");
+            response.setSuccess(true);
+            response.setValue(comment);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        catch (NotFoundException ex) {
+            response.addError(ex.getMessage());
+            response.setMessage(ex.getMessage());
+            response.setSuccess(false);
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+        catch (InvalidValueException ex) {
+            response.addError(ex.getMessage());
+            response.setMessage(ex.getMessage());
+            response.setSuccess(false);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
 }

@@ -2,6 +2,7 @@ package com.iemdb.system;
 
 import com.iemdb.data.DataContext;
 import com.iemdb.exception.ForbiddenException;
+import com.iemdb.exception.InvalidValueException;
 import com.iemdb.exception.NotFoundException;
 import com.iemdb.info.AccountInfo;
 import com.iemdb.info.ActorInfo;
@@ -120,7 +121,7 @@ public class IEMDBSystem {
         return newRate;
     }
 
-    public Vote voteComment(String userEmail, int commentId, int vote) throws NotFoundException{
+    public Comment voteComment(String userEmail, int commentId, int vote) throws NotFoundException, InvalidValueException{
         int userIndex = context.findUser(userEmail);
         int commentIndex = context.findComment(commentId);
 
@@ -131,15 +132,15 @@ public class IEMDBSystem {
             throw new NotFoundException("Comment not found.");
         }
         if(vote != -1 && vote != 1){
-            throw new RuntimeException("Invalid vote value.");
+            throw new InvalidValueException("Invalid vote value.");
         }
 
         Vote newVote = new Vote(userEmail, commentId, vote);
         context.getComments().get(commentIndex).addVote(newVote);
-        return newVote;
+        return context.getComments().get(commentIndex);
     }
 
-    public Movie addToWatchList(String userEmail, int movieId) throws NotFoundException, ForbiddenException {
+    public Movie addToWatchList(String userEmail, int movieId) throws NotFoundException, ForbiddenException, InvalidValueException {
         int userIndex = context.findUser(userEmail);
         int movieIndex = context.findMovie(movieId);
         if(userIndex < 0){
@@ -152,7 +153,7 @@ public class IEMDBSystem {
         Movie movie = context.getMovies().get(movieIndex);
 
         if(user.hasMovieInWatchList(movie.getId())){
-            throw new RuntimeException("Movie already exists.");
+            throw new InvalidValueException("Movie already exists.");
         }
 
         if(!movie.hasPermissionToWatch(user.getBirthDate().getYear())){
