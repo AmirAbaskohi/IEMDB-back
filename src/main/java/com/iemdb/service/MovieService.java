@@ -22,12 +22,6 @@ public class MovieService {
     public ResponseEntity<ResponseInfo> getMovies(@RequestParam(value = "queryType", required=false) Integer queryType,
                                                     @RequestParam(value = "query", required=false) String query,
                                                     @RequestParam(value = "sort", required=false) String sort) {
-        if (iemdbSystem.getCurrentUser() == null ||
-                iemdbSystem.getCurrentUser().isBlank() ||
-                iemdbSystem.getCurrentUser().isEmpty()) {
-            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        }
         ArrayList<AbstractMovieInfo> abstractMoviesInfo = new ArrayList<>();
         ArrayList<Movie> movies = iemdbSystem.getMoviesList();
         ResponseInfo response = new ResponseInfo();
