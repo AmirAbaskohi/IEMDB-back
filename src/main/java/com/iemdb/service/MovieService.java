@@ -87,12 +87,6 @@ public class MovieService {
 
     @RequestMapping(value = "/{movieId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseInfo> getMovie(@PathVariable(value = "movieId") int movieId) {
-        if (iemdbSystem.getCurrentUser() == null ||
-                iemdbSystem.getCurrentUser().isBlank() ||
-                iemdbSystem.getCurrentUser().isEmpty()) {
-            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        }
         try {
             Movie selectedMovie = iemdbSystem.getMovieById(movieId);
             ArrayList<Movie> watchlist = iemdbSystem.getWatchList(iemdbSystem.getCurrentUser());
