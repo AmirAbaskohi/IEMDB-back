@@ -20,4 +20,5 @@ public class AbstractMovieInfo {
     public String getName(){return name;}
     public double getImdbRate(){return imdbRate;}
     public String getImage(){return image;}
+
 }

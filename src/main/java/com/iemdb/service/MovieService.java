@@ -23,7 +23,7 @@ public class MovieService {
                                                     @RequestParam(value = "query", required=false) String query,
                                                     @RequestParam(value = "sort", required=false) String sort) {
         try {
-            Thread.sleep(5000);
+            Thread.sleep(3000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
