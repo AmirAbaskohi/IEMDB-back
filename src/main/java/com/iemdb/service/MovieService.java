@@ -89,13 +89,16 @@ public class MovieService {
     public ResponseEntity<ResponseInfo> getMovie(@PathVariable(value = "movieId") int movieId) {
         try {
             Movie selectedMovie = iemdbSystem.getMovieById(movieId);
-            ArrayList<Movie> watchlist = iemdbSystem.getWatchList(iemdbSystem.getCurrentUser());
             boolean existsInWatchlist = false;
-            for (Movie movie : watchlist)
-                if (movie.getId() == selectedMovie.getId()) {
-                    existsInWatchlist = true;
-                    break;
-                }
+            if (!iemdbSystem.getCurrentUser().isBlank()) {
+                ArrayList<Movie> watchlist = iemdbSystem.getWatchList(iemdbSystem.getCurrentUser());
+                for (Movie movie : watchlist)
+                    if (movie.getId() == selectedMovie.getId()) {
+                        existsInWatchlist = true;
+                        break;
+                    }
+            }
+
             MovieInfo movieInfo = new MovieInfo(selectedMovie, existsInWatchlist);
             ResponseInfo response = new ResponseInfo(movieInfo, true, "Movie returned successfully.");
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -135,12 +138,6 @@ public class MovieService {
 
     @RequestMapping(value = "/{movieId}/actors", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseInfo> getMovieActors(@PathVariable(value = "movieId") int movieId) {
-        if (iemdbSystem.getCurrentUser() == null ||
-                iemdbSystem.getCurrentUser().isBlank() ||
-                iemdbSystem.getCurrentUser().isEmpty()) {
-            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        }
         try {
             ArrayList<AbstractActorInfo> movieActors = iemdbSystem.getMovieActors(movieId);
             ResponseInfo response = new ResponseInfo(movieActors,true, "Movie actors returned successfully.");
@@ -154,12 +151,6 @@ public class MovieService {
 
     @RequestMapping(value = "/{movieId}/comments", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseInfo> getMovieComments(@PathVariable(value = "movieId") int movieId) {
-        if (iemdbSystem.getCurrentUser() == null ||
-                iemdbSystem.getCurrentUser().isBlank() ||
-                iemdbSystem.getCurrentUser().isEmpty()) {
-            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        }
         try {
             ArrayList<Comment> movieComments = iemdbSystem.getMovieComments(movieId);
             ResponseInfo response = new ResponseInfo(movieComments,true, "Movie comments returned successfully.");
