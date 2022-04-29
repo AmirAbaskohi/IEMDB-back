@@ -22,6 +22,11 @@ public class MovieService {
     public ResponseEntity<ResponseInfo> getMovies(@RequestParam(value = "queryType", required=false) Integer queryType,
                                                     @RequestParam(value = "query", required=false) String query,
                                                     @RequestParam(value = "sort", required=false) String sort) {
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         ArrayList<AbstractMovieInfo> abstractMoviesInfo = new ArrayList<>();
         ArrayList<Movie> movies = iemdbSystem.getMoviesList();
         ResponseInfo response = new ResponseInfo();
