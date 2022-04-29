@@ -27,6 +27,7 @@ public class ActorService {
                 iemdbSystem.getCurrentUser().isBlank() ||
                 iemdbSystem.getCurrentUser().isEmpty()) {
             ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
+            response.addError("You are not logged in. Please login first.");
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
 
@@ -47,6 +48,7 @@ public class ActorService {
                 iemdbSystem.getCurrentUser().isBlank() ||
                 iemdbSystem.getCurrentUser().isEmpty()) {
             ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
+            response.addError("You are not logged in. Please login first.");
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
         try {

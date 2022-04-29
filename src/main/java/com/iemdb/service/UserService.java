@@ -28,6 +28,7 @@ public class UserService {
                 iemdbSystem.getCurrentUser().isBlank() ||
                 iemdbSystem.getCurrentUser().isEmpty()) {
             ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
+            response.addError("You are not logged in. Please login first.");
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
         try {
@@ -48,6 +49,7 @@ public class UserService {
                 iemdbSystem.getCurrentUser().isBlank() ||
                 iemdbSystem.getCurrentUser().isEmpty()) {
             ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
+            response.addError("You are not logged in. Please login first.");
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
         try {
@@ -71,6 +73,7 @@ public class UserService {
                 iemdbSystem.getCurrentUser().isBlank() ||
                 iemdbSystem.getCurrentUser().isEmpty()) {
             ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
+            response.addError("You are not logged in. Please login first.");
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
         try {
@@ -97,6 +100,13 @@ public class UserService {
 
     @RequestMapping(value = "/watchlist", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseInfo> removeFromWatchlist(@RequestParam(value = "movieId") int movieId) {
+        if (iemdbSystem.getCurrentUser() == null ||
+                iemdbSystem.getCurrentUser().isBlank() ||
+                iemdbSystem.getCurrentUser().isEmpty()) {
+            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
+            response.addError("You are not logged in. Please login first.");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
         try {
             Movie movie = iemdbSystem.removeFromWatchList(iemdbSystem.getCurrentUser(), movieId);
             ResponseInfo response = new ResponseInfo(new MovieInfo(movie, false), true, "Movie removed from watchlist successfully.");
@@ -111,6 +121,13 @@ public class UserService {
 
     @RequestMapping(value = "/recommendationList", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseInfo> getRecommendationList() {
+        if (iemdbSystem.getCurrentUser() == null ||
+                iemdbSystem.getCurrentUser().isBlank() ||
+                iemdbSystem.getCurrentUser().isEmpty()) {
+            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
+            response.addError("You are not logged in. Please login first.");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
         try {
             ArrayList<Movie> movies = iemdbSystem.getRecommendationList(iemdbSystem.getCurrentUser());
             ArrayList<AbstractMovieInfo> abstractMoviesInfo = new ArrayList<>();

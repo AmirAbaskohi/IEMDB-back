@@ -22,6 +22,7 @@ public class CommentService {
                 iemdbSystem.getCurrentUser().isBlank() ||
                 iemdbSystem.getCurrentUser().isEmpty()) {
             ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
+            response.addError("You are not logged in. Please login first.");
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
         ResponseInfo response = new ResponseInfo();
@@ -47,6 +48,7 @@ public class CommentService {
                 iemdbSystem.getCurrentUser().isBlank() ||
                 iemdbSystem.getCurrentUser().isEmpty()) {
             ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
+            response.addError("You are not logged in. Please login first.");
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
         ResponseInfo response = new ResponseInfo();
