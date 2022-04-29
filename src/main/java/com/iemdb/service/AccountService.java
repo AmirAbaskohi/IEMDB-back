@@ -48,6 +48,7 @@ public class AccountService {
             ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
+        iemdbSystem.logout();
         ResponseInfo response = new ResponseInfo(null, true, "Logged out successfully.");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
