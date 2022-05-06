@@ -7,14 +7,14 @@ public class Actor {
     private String name;
     private String birthDate;
     private String nationality;
-    private String image;
+    private String imageUrl;
 
-    public Actor(int _id, String _name, String _birthDate, String _nationality, String _image){
+    public Actor(int _id, String _name, String _birthDate, String _nationality, String _imageUrl){
         id = _id;
         name = _name;
         birthDate = _birthDate;
         nationality = _nationality;
-        image = _image;
+        imageUrl = _imageUrl;
     }
 
     public Actor(JSONObject jsonObject){
@@ -22,14 +22,14 @@ public class Actor {
         name = jsonObject.getString("name");
         birthDate = jsonObject.getString("birthDate");
         nationality = jsonObject.getString("nationality");
-        image = jsonObject.getString("image");
+        imageUrl = jsonObject.getString("image");
     }
 
     public void update(Actor _actor){
         name = _actor.getName();
         birthDate = _actor.getBirthDate();
         nationality = _actor.getNationality();
-        image = _actor.getImage();
+        imageUrl = _actor.getImageUrl();
     }
 
     public int getId(){return id;}
@@ -40,5 +40,5 @@ public class Actor {
 
     public String getNationality(){return nationality;}
 
-    public String getImage(){return image;}
+    public String getImageUrl(){return imageUrl;}
 }

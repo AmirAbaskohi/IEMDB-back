@@ -1,10 +1,8 @@
 package com.iemdb.info;
 
 import com.iemdb.model.Actor;
-import com.iemdb.model.Movie;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 
 public class AbstractActorInfo {
     private final int id;
@@ -16,7 +14,7 @@ public class AbstractActorInfo {
     public AbstractActorInfo(Actor actor){
         id = actor.getId();
         name = actor.getName();
-        image = actor.getImage();
+        image = actor.getImageUrl();
         birthDate = actor.getBirthDate();
         try {
             age = LocalDate.now().getYear() - Integer.parseInt(birthDate.split(", ", 2)[1]);

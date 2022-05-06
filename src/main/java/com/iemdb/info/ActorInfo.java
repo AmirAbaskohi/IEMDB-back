@@ -20,7 +20,7 @@ public class ActorInfo {
         name = actor.getName();
         birthDate = actor.getBirthDate();
         nationality = actor.getNationality();
-        image = actor.getImage();
+        image = actor.getImageUrl();
         try {
             age = LocalDate.now().getYear() - Integer.parseInt(birthDate.split(", ", 2)[1]);
         }
