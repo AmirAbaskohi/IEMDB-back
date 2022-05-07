@@ -1,8 +1,5 @@
 package com.iemdb.model;
 
-import com.iemdb.info.ActorInfo;
-import com.iemdb.service.ActorService;
-import com.iemdb.utils.Util;
 import org.json.JSONObject;
 
 import java.text.DecimalFormat;
@@ -30,8 +27,8 @@ public class Movie {
     private ArrayList<Comment> comments;
     private ArrayList<Rate> rates;
 
-    private String image;
-    private String coverImage;
+    private String imageUrl;
+    private String coverImageUrl;
 
     private static final DecimalFormat df = new DecimalFormat("0.0");
 
@@ -58,8 +55,8 @@ public class Movie {
         imdbRate = jsonObject.getDouble("imdbRate");
         duration = jsonObject.getInt("duration");
         ageLimit = jsonObject.getInt("ageLimit");
-        image = jsonObject.getString("image");
-        coverImage = jsonObject.getString("coverImage");
+        imageUrl = jsonObject.getString("image");
+        coverImageUrl = jsonObject.getString("coverImage");
 
         for(Object writer: jsonObject.getJSONArray("writers")){
             writers.add((String) writer);
@@ -166,8 +163,8 @@ public class Movie {
     public int getAgeLimit(){return ageLimit;}
     public Double getRating(){return rating;}
     public ArrayList<Rate> getRates(){return rates;}
-    public String getImage(){return image;}
-    public String getCoverImage(){return coverImage;}
+    public String getImageUrl(){return imageUrl;}
+    public String getCoverImageUrl(){return coverImageUrl;}
     public ArrayList<Comment> getComments(){return comments;}
 
     public int compareByReleaseDate(Movie movie2){

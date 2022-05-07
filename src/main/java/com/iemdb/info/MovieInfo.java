@@ -28,8 +28,8 @@ public class MovieInfo {
         summary = movie.getSummary();
         releaseDate = movie.getReleaseDate().toString();
         director = movie.getDirector();
-        image = movie.getImage();
-        coverImage = movie.getCoverImage();
+        image = movie.getImageUrl();
+        coverImage = movie.getCoverImageUrl();
         rating = movie.getRating();
         genres = movie.getGenres();
         writers = movie.getWriters();

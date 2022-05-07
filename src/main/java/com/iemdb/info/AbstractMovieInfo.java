@@ -12,7 +12,7 @@ public class AbstractMovieInfo {
     public AbstractMovieInfo(Movie movie){
         id = movie.getId();
         name = movie.getName();
-        image = movie.getImage();
+        image = movie.getImageUrl();
         imdbRate = movie.getImdbRate();
     }
 
