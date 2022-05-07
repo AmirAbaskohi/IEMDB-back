@@ -12,6 +12,11 @@ import javax.sql.rowset.*;
 import java.sql.*;
 import java.util.ArrayList;
 
+import java.util.Map;
+import java.util.regex.*;
+
+import static java.util.Map.entry;
+
 //@SpringBootApplication
 //@ServletComponentScan
 //@EnableSwagger2
@@ -20,8 +25,6 @@ public class IEMDBApp {
 //		SpringApplication.run(IEMDBApp.class, args);
 
 		IemdbRepository iemdbRepository = new IemdbRepository();
-		System.out.println(iemdbRepository.sendQuery("select * from rate"));
+
 	}
-
-
 }

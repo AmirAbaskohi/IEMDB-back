@@ -1,8 +1,10 @@
 package com.iemdb.utils;
 
-import org.json.JSONArray;
+import org.json.*;
+import java.util.*;
+import java.util.regex.*;
 
-import java.util.ArrayList;
+import static java.util.Map.entry;
 
 public class Util {
     public static String JSONArrayToString(JSONArray jsonArray){
@@ -43,5 +45,30 @@ public class Util {
         if( strList.length() > 0 )
             strList = strList.substring(0, strList.length() - 2);
         return strList;
+    }
+
+    public static String standardizeDateType(String date){
+        Map<String, String> monthToNum = Map.ofEntries(
+                entry("January", "01"), entry("February", "02"), entry("March", "03"),
+                entry("April", "04"), entry("May", "05"), entry("June", "06"),
+                entry("July", "07"), entry("August", "08"), entry("September", "09"),
+                entry("October", "10"), entry("November", "11"), entry("December", "12")
+        );
+        String regex = "(\\w*)\\s(\\d*),\\s(\\d*)";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(date);
+
+        StringBuilder result = new StringBuilder();
+        if(matcher.find()) {
+            result.append(matcher.group(3));
+            result.append("-");
+            result.append(monthToNum.get(matcher.group(1)));
+            result.append("-");
+            result.append(matcher.group(2));
+            return result.toString();
+        }
+        else {
+            return null;
+        }
     }
 }
