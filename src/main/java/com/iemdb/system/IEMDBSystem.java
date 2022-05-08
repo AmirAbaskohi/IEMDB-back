@@ -70,25 +70,24 @@ public class IEMDBSystem {
         return comments.get(comments.size()-1);
     }
 
-//    public Rate rateMovie(String userEmail, int movieId, int score) throws NotFoundException{
-//        int userIndex = context.findUser(userEmail);
-//        int movieIndex = context.findMovie(movieId);
-//
-//        if(userIndex < 0){
-//            throw new NotFoundException("UserNotFound");
-//        }
-//        if(movieIndex < 0){
-//            throw new NotFoundException("MovieNotFound");
-//        }
-//        if(score < 1 || score > 10){
-//            throw new RuntimeException("InvalidRateScore");
-//        }
-//        Rate newRate = new Rate(userEmail, movieId, score);
-//
-//        context.getMovies().get(movieIndex).addRate(newRate);
-//
-//        return newRate;
-//    }
+    public Rate rateMovie(String userEmail, int movieId, int score) throws NotFoundException{
+        User user = userRepository.getUserByEmail(userEmail);
+        Movie movie = movieRepository.getMovie(movieId);
+
+        if(user == null){
+            throw new NotFoundException("UserNotFound");
+        }
+        if(movie == null){
+            throw new NotFoundException("MovieNotFound");
+        }
+        if(score < 1 || score > 10){
+            throw new RuntimeException("InvalidRateScore");
+        }
+
+        movieRepository.addRate(userEmail, movieId, score);
+
+        return movieRepository.getRate(userEmail, movieId);
+    }
 
     public Comment voteComment(String userEmail, int commentId, int vote) throws NotFoundException, InvalidValueException{
         User user = userRepository.getUserByEmail(userEmail);
@@ -274,20 +273,6 @@ public class IEMDBSystem {
             numOfRecommendations += 1;
         }
         return result;
-    }
-
-    public ArrayList<Movie> sortMoviesByReleaseDate(ArrayList<Movie> movies){
-        ArrayList<Movie> sortedMovies = new ArrayList<>(movies);
-        sortedMovies.sort(Movie::compareByReleaseDate);
-        Collections.reverse(sortedMovies);
-        return sortedMovies;
-    }
-
-    public ArrayList<Movie> sortMoviesByImdbRate(ArrayList<Movie> movies){
-        ArrayList<Movie> sortedMovies = new ArrayList<>(movies);
-        sortedMovies.sort(Movie::compareByImdbRate);
-        Collections.reverse(sortedMovies);
-        return sortedMovies;
     }
 
     public String getCurrentUser(){return currentUser;}
