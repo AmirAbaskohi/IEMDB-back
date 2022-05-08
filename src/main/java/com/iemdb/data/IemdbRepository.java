@@ -43,7 +43,9 @@ public class IemdbRepository {
         if(sendQuery("select * from actor").size() == 0){
             addActors();
         }
-//        System.out.println(sendQuery("select * from user"));
+        if (sendQuery("select * from movie").size() == 0){
+            addMovies();
+        }
     }
 
     public ArrayList<Map<String, Object>> sendQuery(String query){
@@ -163,6 +165,98 @@ public class IemdbRepository {
             query += "'" + userData.getString("image") + "'";
             query += ")";
             updateQuery(query);
+        }
+    }
+
+    public void addMovies(){
+        ArrayList<String> response = getResponseFromUrl("http://138.197.181.131:5000/api/v2/movies");
+
+        ArrayList<String> writers = new ArrayList<>();
+        ArrayList<String> genres = new ArrayList<>();
+
+        JSONArray jsonArray = new JSONArray(response.get(0));
+        for (Object data : jsonArray){
+            String query = "INSERT INTO movie VALUES ";
+            JSONObject movieData = (JSONObject) data;
+            query += "(";
+            query += "" + movieData.getInt("id") + ",";
+            query += "\"" + movieData.getString("name") + "\",";
+            query += "\"" + movieData.getString("summary").replace("\"", "\\\"") + "\",";
+            query += "\"" + movieData.getString("releaseDate") + "\",";
+            query += "\"" + movieData.getString("director") + "\",";
+            query += "" + movieData.getDouble("imdbRate") + ",";
+            query += "" + movieData.getInt("duration") + ",";
+            query += "" + movieData.getInt("ageLimit") + ",";
+            query += "NULL,";
+            query += "'" + movieData.getString("image") + "',";
+            query += "'" + movieData.getString("coverImage") + "'";
+            query += ");";
+
+            updateQuery(query);
+
+            JSONArray movieWriters = movieData.getJSONArray("writers");
+            JSONArray movieGenres = movieData.getJSONArray("genres");
+            JSONArray movieCast = movieData.getJSONArray("cast");
+
+            for (Object movieWriter : movieWriters) {
+                int writerIndex = writers.indexOf((String) movieWriter);
+                if (writerIndex == -1) {
+                    writerIndex = writers.size();
+                    writers.add((String) movieWriter);
+                }
+
+                String writerQuery = "INSERT INTO writer VALUES ";
+                writerQuery += "(";
+                writerQuery += "" + (writerIndex+1) + ",";
+                writerQuery += "'" + (String)movieWriter + "'";
+                writerQuery += ");";
+
+                updateQuery(writerQuery);
+
+                writerQuery = "INSERT INTO writer_movie VALUES ";
+                writerQuery += "(";
+                writerQuery += "" + (writerIndex+1) + ",";
+                writerQuery += "" + movieData.getInt("id") + "";
+                writerQuery += ");";
+
+                updateQuery(writerQuery);
+            }
+
+            for (Object movieGenre : movieGenres) {
+                int genreIndex = genres.indexOf((String) movieGenre);
+                if (genreIndex == -1) {
+                    genreIndex = genres.size();
+                    genres.add((String) movieGenre);
+                }
+
+                String genreQuery = "INSERT INTO genre VALUES ";
+                genreQuery += "(";
+                genreQuery += "" + (genreIndex+1) + ",";
+                genreQuery += "'" + movieGenre + "'";
+                genreQuery += ");";
+
+                updateQuery(genreQuery);
+
+                genreQuery = "INSERT INTO genre_movie VALUES ";
+                genreQuery += "(";
+                genreQuery += "" + movieData.getInt("id") + ",";
+                genreQuery += "" + (genreIndex+1) + "";
+                genreQuery += ");";
+
+                updateQuery(genreQuery);
+            }
+
+            for (Object movieActor : movieCast) {
+                Integer actorId = (Integer)movieActor;
+
+                String actorQuery = "INSERT INTO actor_movie VALUES ";
+                actorQuery += "(";
+                actorQuery += "" + actorId + ",";
+                actorQuery += "" + movieData.getInt("id") + "";
+                actorQuery += ");";
+
+                updateQuery(actorQuery);
+            }
         }
     }
 }
