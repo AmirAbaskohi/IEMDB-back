@@ -1,7 +1,9 @@
 package com.iemdb.system;
 
+import com.iemdb.data.CommentRepository;
 import com.iemdb.data.DataContext;
 import com.iemdb.data.MovieRepository;
+import com.iemdb.data.UserRepository;
 import com.iemdb.exception.ForbiddenException;
 import com.iemdb.exception.InvalidValueException;
 import com.iemdb.exception.NotFoundException;
@@ -34,12 +36,16 @@ public class IEMDBSystem {
     private DataContext context;
 
     private MovieRepository movieRepository;
+    private CommentRepository commentRepository;
+    private UserRepository userRepository;
 
     private String currentUser = "";
 
     public IEMDBSystem(){
         context = new DataContext();
         movieRepository = new MovieRepository();
+        commentRepository = new CommentRepository();
+        userRepository = new UserRepository();
     }
 
     public IEMDBSystem(DataContext _context){
@@ -47,17 +53,21 @@ public class IEMDBSystem {
     }
 
     public Comment addComment(String userEmail, String text, int movieId) throws NotFoundException{
-        int movieIndex = context.findMovie(movieId);
-        int userIndex = context.findUser(userEmail);
-        if(movieIndex < 0){
+        Movie movie = movieRepository.getMovie(movieId);
+        User user = userRepository.getUserByEmail(userEmail);
+
+        if(movie == null){
             throw new NotFoundException("MovieNotFound");
         }
+        if(user == null){
+            throw new NotFoundException("UserNotFound");
+        }
 
-        Comment newComment = new Comment(context.getComments().size() + 1, userEmail, movieId, text);
-        context.addComment(newComment);
-        newComment.setUserNickname(context.getUsers().get(userIndex).getNickname());
+        commentRepository.addComment(userEmail, text, movieId);
 
-        return newComment;
+        ArrayList<Comment> comments = commentRepository.getComment(userEmail, movieId);
+
+        return comments.get(comments.size()-1);
     }
 
 //    public Rate rateMovie(String userEmail, int movieId, int score) throws NotFoundException{
@@ -81,22 +91,21 @@ public class IEMDBSystem {
 //    }
 
     public Comment voteComment(String userEmail, int commentId, int vote) throws NotFoundException, InvalidValueException{
-        int userIndex = context.findUser(userEmail);
-        int commentIndex = context.findComment(commentId);
+        User user = userRepository.getUserByEmail(userEmail);
+        Comment comment = commentRepository.getCommentById(commentId);
 
-        if(userIndex < 0){
+        if(user == null){
             throw new NotFoundException("User not found.");
         }
-        if(commentIndex < 0){
+        if(comment == null){
             throw new NotFoundException("Comment not found.");
         }
         if(vote != -1 && vote != 1){
             throw new InvalidValueException("Invalid vote value.");
         }
 
-        Vote newVote = new Vote(userEmail, commentId, vote);
-        context.getComments().get(commentIndex).addVote(newVote);
-        return context.getComments().get(commentIndex);
+        commentRepository.addVote(userEmail, commentId, vote);
+        return comment;
     }
 
     public Movie addToWatchList(String userEmail, int movieId) throws NotFoundException, ForbiddenException, InvalidValueException {
@@ -199,12 +208,11 @@ public class IEMDBSystem {
     }
 
     public ArrayList<Comment> getMovieComments(int movieId) throws NotFoundException{
-        int movieIndex = context.findMovie(movieId);
-        if(movieId < 0){
+        Movie movie = movieRepository.getMovie(movieId);
+        if(movie == null){
             throw new NotFoundException("Movie not found.");
         }
-        Movie movie = context.getMovies().get(movieIndex);
-        return movie.getComments();
+        return commentRepository.getMovieComments(movieId);
     }
 
     public User getUser(String userEmail) throws NotFoundException{

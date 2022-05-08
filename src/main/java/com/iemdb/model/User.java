@@ -3,31 +3,34 @@ package com.iemdb.model;
 import org.json.JSONObject;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Map;
 
 public class User {
     private String email;
     private String password;
-    private String nickname;
+    private String nickName;
     private String name;
     private LocalDate birthDate;
 
     ArrayList<Movie> watchList;
 
-    public User(JSONObject jsonObject){
+    public User(Map<String, Object> data){
         watchList = new ArrayList<>();
 
-        email = jsonObject.getString("email");
-        password = jsonObject.getString("password");
-        nickname = jsonObject.getString("nickname");
-        name = jsonObject.getString("name");
-        birthDate = LocalDate.parse(jsonObject.getString("birthDate"));
+        email = (String) data.get("email");
+        password = (String) data.get("password");
+        nickName = (String) data.get("nickName");
+        name = (String) data.get("name");
+        birthDate = ((Date)data.get("birthDate")).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 
     public void update(User _user){
         email = _user.getEmail();
         password = _user.getPassword();
-        nickname = _user.getNickname();
+        nickName = _user.getNickName();
         name = _user.getName();
         birthDate = _user.getBirthDate();
     }
@@ -58,7 +61,7 @@ public class User {
 
     public String getEmail(){return email;}
     public String getPassword(){return password;}
-    public String getNickname(){return nickname;}
+    public String getNickName(){return nickName;}
     public String getName(){return name;}
     public LocalDate getBirthDate(){return birthDate;}
 
