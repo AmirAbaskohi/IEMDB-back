@@ -1,6 +1,7 @@
 package com.iemdb.system;
 
 import com.iemdb.data.DataContext;
+import com.iemdb.data.MovieRepository;
 import com.iemdb.exception.ForbiddenException;
 import com.iemdb.exception.InvalidValueException;
 import com.iemdb.exception.NotFoundException;
@@ -26,67 +27,23 @@ public class IEMDBSystem {
     public static IEMDBSystem getInstance(){
         if(iemdbSystem == null){
             iemdbSystem = new IEMDBSystem();
-            iemdbSystem.readDataFromServer();
         }
         return iemdbSystem;
     }
 
     private DataContext context;
 
+    private MovieRepository movieRepository;
+
     private String currentUser = "";
 
     public IEMDBSystem(){
         context = new DataContext();
+        movieRepository = new MovieRepository();
     }
 
     public IEMDBSystem(DataContext _context){
         context = _context;
-    }
-
-    public void addActor(JSONObject jsonObject){
-        Actor newActor = new Actor(jsonObject);
-        int existId = context.findActor(newActor.getId());
-        if (existId == -1){
-           context.addActor(newActor);
-        }
-        else {
-            context.getActors().get(existId).update(newActor);
-        }
-    }
-
-    public void addMovie(JSONObject jsonObject) throws NotFoundException{
-        Movie newMovie = new Movie(jsonObject, context.getActors());
-
-        for(Object actorId: jsonObject.getJSONArray("cast")){
-            int actorIndex = context.findActor((Integer) actorId);
-            if(actorIndex < 0){
-                throw new NotFoundException("Actor Not Found");
-            }
-            for (Actor actor : context.getActors()) {
-                if (actor.getId() == actorIndex) {
-                    newMovie.addCast(actor);
-                    break;
-                }
-            }
-        }
-        int existId = context.findMovie(newMovie.getId());
-        if (existId == -1){
-            context.addMovie(newMovie);
-        }
-        else {
-            context.getMovies().get(existId).update(newMovie);
-        }
-    }
-
-    public void addUser(JSONObject jsonObject){
-        User newUser = new User(jsonObject);
-        int existId = context.findUser(newUser.getEmail());
-        if (existId == -1){
-            context.addUser(newUser);
-        }
-        else {
-            context.getUsers().get(existId).update(newUser);
-        }
     }
 
     public Comment addComment(String userEmail, String text, int movieId) throws NotFoundException{
@@ -103,25 +60,25 @@ public class IEMDBSystem {
         return newComment;
     }
 
-    public Rate rateMovie(String userEmail, int movieId, int score) throws NotFoundException{
-        int userIndex = context.findUser(userEmail);
-        int movieIndex = context.findMovie(movieId);
-
-        if(userIndex < 0){
-            throw new NotFoundException("UserNotFound");
-        }
-        if(movieIndex < 0){
-            throw new NotFoundException("MovieNotFound");
-        }
-        if(score < 1 || score > 10){
-            throw new RuntimeException("InvalidRateScore");
-        }
-        Rate newRate = new Rate(userEmail, movieId, score);
-
-        context.getMovies().get(movieIndex).addRate(newRate);
-
-        return newRate;
-    }
+//    public Rate rateMovie(String userEmail, int movieId, int score) throws NotFoundException{
+//        int userIndex = context.findUser(userEmail);
+//        int movieIndex = context.findMovie(movieId);
+//
+//        if(userIndex < 0){
+//            throw new NotFoundException("UserNotFound");
+//        }
+//        if(movieIndex < 0){
+//            throw new NotFoundException("MovieNotFound");
+//        }
+//        if(score < 1 || score > 10){
+//            throw new RuntimeException("InvalidRateScore");
+//        }
+//        Rate newRate = new Rate(userEmail, movieId, score);
+//
+//        context.getMovies().get(movieIndex).addRate(newRate);
+//
+//        return newRate;
+//    }
 
     public Comment voteComment(String userEmail, int commentId, int vote) throws NotFoundException, InvalidValueException{
         int userIndex = context.findUser(userEmail);
@@ -181,8 +138,8 @@ public class IEMDBSystem {
         return getMovieById(movieId);
     }
 
-    public ArrayList<Movie> getMoviesList(){
-        return context.getMovies();
+    public ArrayList<Movie> getMovies(Integer queryType, String query, String sort) {
+        return movieRepository.getMovies(queryType, query, sort);
     }
 
     public Movie getMovieById(int id) throws NotFoundException{
@@ -193,69 +150,39 @@ public class IEMDBSystem {
         return context.getMovies().get(movieIndex);
     }
 
-    public ArrayList<Movie> getMoviesByGenre(ArrayList<Movie> movies, String genre){
-        ArrayList<Movie> result = new ArrayList<>();
-        for (Movie movie: movies){
-            if(movie.hasGenre(genre)){
-                result.add(movie);
-            }
-        }
-        return result;
-    }
-
-    public ArrayList<AbstractMovieInfo> getMoviesByActor(int actorId) throws NotFoundException{
-        int actorIndex = context.findActor(actorId);
-
-        if(actorIndex < 0){
-            throw new NotFoundException("Actor not found.");
-        }
-
-        ArrayList<AbstractMovieInfo> result = new ArrayList<>();
-        for (Movie movie: context.getMovies()){
-            if(movie.hasActor(actorId)){
-                result.add(new AbstractMovieInfo(movie));
-            }
-        }
-        return result;
-    }
-
-    public ArrayList<Movie> getMoviesByDate(ArrayList<Movie> movies, int startYear, int endYear){
-        ArrayList<Movie> result = new ArrayList<>();
-        for (Movie movie: movies){
-            if(movie.getReleaseDate().getYear() >= startYear && movie.getReleaseDate().getYear() <= endYear){
-                result.add(movie);
-            }
-        }
-        return result;
-    }
-
-    public ArrayList<Movie> getMoviesBySearchName(ArrayList<Movie> movies, String searchKey){
-        ArrayList<Movie> result = new ArrayList<>();
-        for (Movie movie: movies){
-            if(StringUtils.contains(movie.getName().toLowerCase(), searchKey.toLowerCase())){
-                result.add(movie);
-            }
-        }
-        return result;
-    }
-
-    public ActorInfo getActor(int actorId) throws NotFoundException{
-        int actorIndex = context.findActor(actorId);
-
-        if(actorIndex < 0){
-            throw new NotFoundException("Actor not found.");
-        }
-        Actor actor = context.getActors().get(actorIndex);
-
-        ArrayList<Movie> actorMovies = new ArrayList<>();
-        for(Movie movie: context.getMovies()){
-            if (movie.hasActor(actorId)){
-                actorMovies.add(movie);
-            }
-        }
-
-        return new ActorInfo(actor, actorMovies);
-    }
+//    public ArrayList<AbstractMovieInfo> getMoviesByActor(int actorId) throws NotFoundException{
+//        int actorIndex = context.findActor(actorId);
+//
+//        if(actorIndex < 0){
+//            throw new NotFoundException("Actor not found.");
+//        }
+//
+//        ArrayList<AbstractMovieInfo> result = new ArrayList<>();
+//        for (Movie movie: context.getMovies()){
+//            if(movie.hasActor(actorId)){
+//                result.add(new AbstractMovieInfo(movie));
+//            }
+//        }
+//        return result;
+//    }
+//
+//    public ActorInfo getActor(int actorId) throws NotFoundException{
+//        int actorIndex = context.findActor(actorId);
+//
+//        if(actorIndex < 0){
+//            throw new NotFoundException("Actor not found.");
+//        }
+//        Actor actor = context.getActors().get(actorIndex);
+//
+//        ArrayList<Movie> actorMovies = new ArrayList<>();
+//        for(Movie movie: context.getMovies()){
+//            if (movie.hasActor(actorId)){
+//                actorMovies.add(movie);
+//            }
+//        }
+//
+//        return new ActorInfo(actor, actorMovies);
+//    }
 
     public ArrayList<AbstractActorInfo> getMovieActors(int movieId) throws NotFoundException{
         int movieIndex = context.findMovie(movieId);
@@ -353,75 +280,6 @@ public class IEMDBSystem {
         sortedMovies.sort(Movie::compareByImdbRate);
         Collections.reverse(sortedMovies);
         return sortedMovies;
-    }
-
-
-    public void readDataFromServer(){
-        readActorsFromServer();
-        readMoviesFromServer();
-        readUsersFromServer();
-        readCommentsFromServer();
-    }
-
-    public void readActorsFromServer(){
-        ArrayList<String> response = getResponseFromUrl("http://138.197.181.131:5000/api/v2/actors");
-        JSONArray jsonArray = new JSONArray(response.get(0));
-        for (Object actorData : jsonArray){
-            addActor((JSONObject) actorData);
-        }
-    }
-
-    public void readMoviesFromServer(){
-        ArrayList<String> response = getResponseFromUrl("http://138.197.181.131:5000/api/v2/movies");
-        JSONArray jsonArray = new JSONArray(response.get(0));
-        for (Object movieData : jsonArray){
-            try {
-                addMovie((JSONObject) movieData);
-            }
-            catch (Exception ex) {}
-        }
-    }
-
-    public void readUsersFromServer(){
-        ArrayList<String> response = getResponseFromUrl("http://138.197.181.131:5000/api/users");
-        JSONArray jsonArray = new JSONArray(response.get(0));
-        for (Object userData : jsonArray){
-            addUser((JSONObject) userData);
-        }
-    }
-
-    public void readCommentsFromServer(){
-        ArrayList<String> response = getResponseFromUrl("http://138.197.181.131:5000/api/comments");
-        JSONArray jsonArray = new JSONArray(response.get(0));
-        for (Object commentData : jsonArray){
-            try {
-                JSONObject comment = (JSONObject)commentData;
-                addComment(comment.getString("userEmail"), comment.getString("text"), comment.getInt("movieId"));
-            }
-            catch (Exception ex) {}
-        }
-    }
-
-    public ArrayList<String> getResponseFromUrl(String _url){
-        ArrayList<String> response = new ArrayList<>();
-        try{
-            URL url = new URL(_url);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("GET");
-
-            int status = con.getResponseCode();
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            String inputLine;
-
-            while ((inputLine = in.readLine()) != null) {
-                response.add(inputLine);
-            }
-            in.close();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return response;
     }
 
     public String getCurrentUser(){return currentUser;}

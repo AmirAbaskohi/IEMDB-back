@@ -15,7 +15,7 @@ public class AbstractActorInfo {
         id = actor.getId();
         name = actor.getName();
         image = actor.getImageUrl();
-        birthDate = actor.getBirthDate();
+        birthDate = actor.getBirthDate().toString();
         try {
             age = LocalDate.now().getYear() - Integer.parseInt(birthDate.split(", ", 2)[1]);
         }

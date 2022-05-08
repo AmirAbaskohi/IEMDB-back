@@ -69,7 +69,7 @@ public class DataContext {
         int movieIndex = findMovie(comment.getMovieId());
         comments.add(comment);
         comment.setId(comments.size());
-        movies.get(movieIndex).addComment(comment);
+//        movies.get(movieIndex).addComment(comment);
     }
 
     public ArrayList<Actor> getActors(){return actors;}

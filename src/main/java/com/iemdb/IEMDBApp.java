@@ -1,6 +1,8 @@
 package com.iemdb;
 
 import com.iemdb.data.IemdbRepository;
+import com.iemdb.data.MovieRepository;
+import com.iemdb.model.Movie;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import io.swagger.models.auth.In;
 //import org.springframework.boot.SpringApplication;
@@ -25,6 +27,7 @@ public class IEMDBApp {
 //		SpringApplication.run(IEMDBApp.class, args);
 
 		IemdbRepository iemdbRepository = new IemdbRepository();
-
+		MovieRepository movieRepository = new MovieRepository();
+		ArrayList<Movie> movies = movieRepository.getMovies(2, "god", "date");
 	}
 }

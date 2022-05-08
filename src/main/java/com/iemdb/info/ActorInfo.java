@@ -18,7 +18,7 @@ public class ActorInfo {
     public ActorInfo(Actor actor, ArrayList<Movie> actorMovies){
         id = actor.getId();
         name = actor.getName();
-        birthDate = actor.getBirthDate();
+        birthDate = actor.getBirthDate().toString();
         nationality = actor.getNationality();
         image = actor.getImageUrl();
         try {

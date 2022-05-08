@@ -21,44 +21,44 @@ import java.util.ArrayList;
 public class ActorService {
     IEMDBSystem iemdbSystem = IEMDBSystem.getInstance();
 
-    @RequestMapping(value = "/{actorId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseInfo> getActor(@PathVariable(value = "actorId") int actorId) {
-        if (iemdbSystem.getCurrentUser() == null ||
-                iemdbSystem.getCurrentUser().isBlank() ||
-                iemdbSystem.getCurrentUser().isEmpty()) {
-            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
-            response.addError("You are not logged in. Please login first.");
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        }
+//    @RequestMapping(value = "/{actorId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<ResponseInfo> getActor(@PathVariable(value = "actorId") int actorId) {
+//        if (iemdbSystem.getCurrentUser() == null ||
+//                iemdbSystem.getCurrentUser().isBlank() ||
+//                iemdbSystem.getCurrentUser().isEmpty()) {
+//            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
+//            response.addError("You are not logged in. Please login first.");
+//            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+//        }
+//
+//        try {
+//            ActorInfo actorInfo = iemdbSystem.getActor(actorId);
+//            ResponseInfo response = new ResponseInfo(actorInfo, true, "Actor returned successfully.");
+//            return new ResponseEntity<>(response, HttpStatus.OK);
+//        }
+//        catch (NotFoundException ex) {
+//            ResponseInfo response = new ResponseInfo(null, false, "Actor not found.");
+//            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+//        }
+//    }
 
-        try {
-            ActorInfo actorInfo = iemdbSystem.getActor(actorId);
-            ResponseInfo response = new ResponseInfo(actorInfo, true, "Actor returned successfully.");
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        }
-        catch (NotFoundException ex) {
-            ResponseInfo response = new ResponseInfo(null, false, "Actor not found.");
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-        }
-    }
-
-    @RequestMapping(value = "/{actorId}/movies", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseInfo> getActorMovies(@PathVariable(value = "actorId") int actorId) {
-        if (iemdbSystem.getCurrentUser() == null ||
-                iemdbSystem.getCurrentUser().isBlank() ||
-                iemdbSystem.getCurrentUser().isEmpty()) {
-            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
-            response.addError("You are not logged in. Please login first.");
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        }
-        try {
-            ArrayList<AbstractMovieInfo> actorMovies = iemdbSystem.getMoviesByActor(actorId);
-            ResponseInfo response = new ResponseInfo(actorMovies, true, "Actor movies returned successfully.");
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        }
-        catch (NotFoundException ex) {
-            ResponseInfo response = new ResponseInfo(null, false, "Actor not found.");
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-        }
-    }
+//    @RequestMapping(value = "/{actorId}/movies", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<ResponseInfo> getActorMovies(@PathVariable(value = "actorId") int actorId) {
+//        if (iemdbSystem.getCurrentUser() == null ||
+//                iemdbSystem.getCurrentUser().isBlank() ||
+//                iemdbSystem.getCurrentUser().isEmpty()) {
+//            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
+//            response.addError("You are not logged in. Please login first.");
+//            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+//        }
+//        try {
+//            ArrayList<AbstractMovieInfo> actorMovies = iemdbSystem.getMoviesByActor(actorId);
+//            ResponseInfo response = new ResponseInfo(actorMovies, true, "Actor movies returned successfully.");
+//            return new ResponseEntity<>(response, HttpStatus.OK);
+//        }
+//        catch (NotFoundException ex) {
+//            ResponseInfo response = new ResponseInfo(null, false, "Actor not found.");
+//            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+//        }
+//    }
 }

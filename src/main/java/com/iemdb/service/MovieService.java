@@ -28,7 +28,6 @@ public class MovieService {
             e.printStackTrace();
         }
         ArrayList<AbstractMovieInfo> abstractMoviesInfo = new ArrayList<>();
-        ArrayList<Movie> movies = iemdbSystem.getMoviesList();
         ResponseInfo response = new ResponseInfo();
 
         if (query != null && query.isEmpty() && query.isBlank()) {
@@ -67,15 +66,7 @@ public class MovieService {
         if (!response.getSuccess())
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 
-        if (query != null && queryType != null)
-            movies = queryType == 1 ? iemdbSystem.getMoviesByGenre(movies, query) :
-                     queryType == 2 ? iemdbSystem.getMoviesBySearchName(movies, query) :
-                                      iemdbSystem.getMoviesByDate(movies, Integer.parseInt(query.split("-", 2)[0]),
-                                                                          Integer.parseInt(query.split("-", 2)[1]));
-
-        if (sort != null)
-            movies = sort.equals("date") ? iemdbSystem.sortMoviesByReleaseDate(movies) :
-                                      iemdbSystem.sortMoviesByImdbRate(movies) ;
+        ArrayList<Movie> movies = iemdbSystem.getMovies(queryType, query, sort);
 
         for(Movie movie : movies){
             abstractMoviesInfo.add(new AbstractMovieInfo(movie));
@@ -114,32 +105,32 @@ public class MovieService {
     }
 
 
-    @RequestMapping(value = "/{movieId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseInfo> rateMovie(@PathVariable(value = "movieId") int movieId,
-                                                @RequestParam(value = "score") int score) {
-        if (iemdbSystem.getCurrentUser() == null ||
-                iemdbSystem.getCurrentUser().isBlank() ||
-                iemdbSystem.getCurrentUser().isEmpty()) {
-            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
-            response.addError("You are not logged in. Please login first.");
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        }
-        try {
-            Rate rate = iemdbSystem.rateMovie(iemdbSystem.getCurrentUser(), movieId, score);
-            ResponseInfo response = new ResponseInfo(new MovieRateInfo(iemdbSystem.getMovieById(movieId)),true, "Movie rated successfully.");
-            return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
-        }
-        catch (NotFoundException ex) {
-            ResponseInfo response = new ResponseInfo(null, false, "Movie not found.");
-            response.addError(ex.getMessage());
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-        }
-        catch (RuntimeException ex){
-            ResponseInfo response = new ResponseInfo(null, false, "Movie rating failed.");
-            response.addError(ex.getMessage());
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        }
-    }
+//    @RequestMapping(value = "/{movieId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<ResponseInfo> rateMovie(@PathVariable(value = "movieId") int movieId,
+//                                                @RequestParam(value = "score") int score) {
+//        if (iemdbSystem.getCurrentUser() == null ||
+//                iemdbSystem.getCurrentUser().isBlank() ||
+//                iemdbSystem.getCurrentUser().isEmpty()) {
+//            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
+//            response.addError("You are not logged in. Please login first.");
+//            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+//        }
+//        try {
+//            Rate rate = iemdbSystem.rateMovie(iemdbSystem.getCurrentUser(), movieId, score);
+//            ResponseInfo response = new ResponseInfo(new MovieRateInfo(iemdbSystem.getMovieById(movieId)),true, "Movie rated successfully.");
+//            return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+//        }
+//        catch (NotFoundException ex) {
+//            ResponseInfo response = new ResponseInfo(null, false, "Movie not found.");
+//            response.addError(ex.getMessage());
+//            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+//        }
+//        catch (RuntimeException ex){
+//            ResponseInfo response = new ResponseInfo(null, false, "Movie rating failed.");
+//            response.addError(ex.getMessage());
+//            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+//        }
+//    }
 
     @RequestMapping(value = "/{movieId}/actors", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseInfo> getMovieActors(@PathVariable(value = "movieId") int movieId) {

@@ -15,7 +15,7 @@ public class MovieInfo {
     private final Double rating;
     private final ArrayList<String> genres;
     private final ArrayList<String> writers;
-    private final int numberOfRates;
+    private final int numberOfRates = 0;
     private final double imdbRate;
     private final int ageLimit;
     private final int duration;
@@ -33,7 +33,8 @@ public class MovieInfo {
         rating = movie.getRating();
         genres = movie.getGenres();
         writers = movie.getWriters();
-        numberOfRates = movie.getRates().size();
+        // TODO
+//        numberOfRates = movie.getRates().size();
         imdbRate = movie.getImdbRate();
         ageLimit = movie.getAgeLimit();
         duration = movie.getDuration();

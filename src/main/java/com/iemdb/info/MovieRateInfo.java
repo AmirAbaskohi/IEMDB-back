@@ -8,7 +8,7 @@ public class MovieRateInfo {
 
     public MovieRateInfo(Movie movie) {
         rating = movie.getRating();
-        numberOfRates = movie.getRates().size();
+//        numberOfRates = movie.getRates().size();
     }
 
     public int getNumberOfRates() {return numberOfRates;}
