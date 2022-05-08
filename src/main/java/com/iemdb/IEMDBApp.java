@@ -1,7 +1,9 @@
 package com.iemdb;
 
+import com.iemdb.data.ActorRepository;
 import com.iemdb.data.IemdbRepository;
 import com.iemdb.data.MovieRepository;
+import com.iemdb.model.Actor;
 import com.iemdb.model.Movie;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import io.swagger.models.auth.In;
@@ -27,7 +29,7 @@ public class IEMDBApp {
 //		SpringApplication.run(IEMDBApp.class, args);
 
 		IemdbRepository iemdbRepository = new IemdbRepository();
-		MovieRepository movieRepository = new MovieRepository();
-		Movie movie = movieRepository.getMovie(4);
+		ActorRepository actorRepository = new ActorRepository();
+		ArrayList<Movie> movies = actorRepository.getActorMovies(38);
 	}
 }
