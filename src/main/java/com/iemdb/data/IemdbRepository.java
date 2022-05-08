@@ -17,6 +17,8 @@ public class IemdbRepository {
     ComboPooledDataSource dataSource;
 
     public IemdbRepository(){
+        DatabaseInitializer databaseInitializer = new DatabaseInitializer();
+        databaseInitializer.initialize();
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
