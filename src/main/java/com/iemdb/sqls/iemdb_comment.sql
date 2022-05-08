@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS `comment` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `useremail` varchar(45) DEFAULT NULL,
+  `userEmail` varchar(45) DEFAULT NULL,
   `text` varchar(200) DEFAULT NULL,
   `movieId` int DEFAULT NULL,
   PRIMARY KEY (`id`),

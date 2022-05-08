@@ -6,6 +6,7 @@ import org.json.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class Comment {
     private int id;
@@ -13,7 +14,6 @@ public class Comment {
     private String userNickname;
     private int movieId;
     private String text;
-    private LocalDateTime creationTime;
 
     ArrayList<Vote> votes;
 
@@ -23,8 +23,18 @@ public class Comment {
         userEmail = _userEmail;
         movieId = _movieId;
         text = _text;
-        creationTime = LocalDateTime.now();
     }
+
+    public Comment(Map<String, Object> data){
+        votes = new ArrayList<>();
+
+        id = (Integer)data.get("id");
+        userEmail = (String) data.get("userEmail");
+        movieId = (Integer)data.get("movieId");
+        text = (String) data.get("text");
+
+    }
+
 
     public void addVote(Vote vote){
         int voteIndex = findVote(vote.getUserEmail());
@@ -58,7 +68,7 @@ public class Comment {
     }
 
     public void setId(int _id){id = _id;}
-
+    public void setVotes(ArrayList<Vote> _votes){votes = _votes;}
     public void setUserNickname(String _userNickname){userNickname = _userNickname;}
 
     public int getId(){return id;}
