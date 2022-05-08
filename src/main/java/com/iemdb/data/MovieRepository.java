@@ -1,8 +1,12 @@
 package com.iemdb.data;
 
+import com.iemdb.model.Actor;
 import com.iemdb.model.Movie;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Map;
 
 public class MovieRepository {
@@ -109,5 +113,25 @@ public class MovieRepository {
         wantedMovie.setWriters(movieWriters);
 
         return wantedMovie;
+    }
+
+    public ArrayList<Actor> getActors(int movieId) {
+        ArrayList<Actor> result = new ArrayList<>();
+        String dbQuery = "SELECT a.* FROM actor a, actor_movie am ";
+        dbQuery += "WHERE am.movieId = " + movieId + " AND a.id = am.actorId;";
+        ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(dbQuery);
+        for (Map<String, Object> row : queryResult) {
+            LocalDate birthDate;
+            try{
+                birthDate = ((Date)row.get("birthDate")).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            }catch (Exception e){
+                System.out.println("Cannot Parse The Date!!! In set Actor.");
+                birthDate = null;
+            }
+            Actor actor = new Actor((Integer) row.get("id"), (String) row.get("name"),
+                    birthDate, (String) row.get("nationality"), (String) row.get("imageUrl"));
+            result.add(actor);
+        }
+        return result;
     }
 }
