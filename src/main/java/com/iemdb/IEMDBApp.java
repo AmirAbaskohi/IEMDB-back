@@ -28,6 +28,6 @@ public class IEMDBApp {
 
 		IemdbRepository iemdbRepository = new IemdbRepository();
 		MovieRepository movieRepository = new MovieRepository();
-		ArrayList<Movie> movies = movieRepository.getMovies(2, "god", "date");
+		Movie movie = movieRepository.getMovie(4);
 	}
 }

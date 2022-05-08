@@ -90,4 +90,24 @@ public class MovieRepository {
             return result;
         }
     }
+
+    public Movie getMovie(int id) {;
+        String dbQuery = "SELECT * FROM movie WHERE id = " + id + ";";
+        ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(dbQuery);
+        if (queryResult.size() == 0)
+            return null;
+        Movie wantedMovie = new Movie(queryResult.get(0));
+
+        dbQuery = "SELECT g.name FROM genre_movie gm, genre g ";
+        dbQuery += "WHERE gm.movieId = " + id + " AND gm.genreId = g.id";
+        ArrayList<Map<String, Object>> movieGenres = iemdbRepository.sendQuery(dbQuery);
+        wantedMovie.setGenres(movieGenres);
+
+        dbQuery = "SELECT w.name FROM writer_movie wm, writer w ";
+        dbQuery += "WHERE wm.movieId = " + id + " AND wm.writerId = w.id";
+        ArrayList<Map<String, Object>> movieWriters = iemdbRepository.sendQuery(dbQuery);
+        wantedMovie.setWriters(movieWriters);
+
+        return wantedMovie;
+    }
 }

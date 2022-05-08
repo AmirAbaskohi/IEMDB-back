@@ -110,7 +110,7 @@ public class Movie {
 
     public void setWriters(ArrayList<Map<String, Object>> _writers) {
         for (Map<String, Object> writer : _writers) {
-            genres.add((String) writer.get("name"));
+            writers.add((String) writer.get("name"));
         }
     }
 
