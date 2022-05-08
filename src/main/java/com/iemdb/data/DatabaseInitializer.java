@@ -9,7 +9,7 @@ import java.util.*;
 public class DatabaseInitializer {
     ComboPooledDataSource dataSource;
 
-    String databaseName = "test";
+    String databaseName = "iemdb";
 
     List<String> tableNames = List.of("actor", "movie", "user", "rate", "comment", "genre", "vote", "actor_movie",
             "writer", "genre_movie", "watchlist", "writer_movie");
