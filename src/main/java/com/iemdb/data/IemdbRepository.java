@@ -46,6 +46,9 @@ public class IemdbRepository {
         if (sendQuery("select * from movie").size() == 0){
             addMovies();
         }
+        if (sendQuery("select * from comment").size() == 0){
+            addComments();
+        }
     }
 
     public ArrayList<Map<String, Object>> sendQuery(String query){
@@ -259,4 +262,21 @@ public class IemdbRepository {
             }
         }
     }
+
+    public void addComments(){
+        ArrayList<String> response = getResponseFromUrl("http://138.197.181.131:5000/api/comments");
+        JSONArray jsonArray = new JSONArray(response.get(0));
+        for (Object data : jsonArray){
+            JSONObject commentData = (JSONObject) data;
+            String query = "INSERT INTO comment VALUES ";
+            query += "(";
+            query += "NULL,";
+            query += "'" + commentData.getString("userEmail") + "',";
+            query += "'" + commentData.getString("text") + "',";
+            query += "" + commentData.getInt("movieId") + "";
+            query += ")";
+            updateQuery(query);
+        }
+    }
+
 }
