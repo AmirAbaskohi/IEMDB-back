@@ -17,7 +17,7 @@ public class UserRepository {
             User newUser = new User(response.get(0));
             return newUser;
         }else{
-            System.out.println("Comment does not exist");
+            System.out.println("User does not exist");
         }
         return null;
     }

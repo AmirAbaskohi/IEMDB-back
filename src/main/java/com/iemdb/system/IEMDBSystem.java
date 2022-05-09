@@ -36,6 +36,7 @@ public class IEMDBSystem {
     private CommentRepository commentRepository;
     private UserRepository userRepository;
     private ActorRepository actorRepository;
+    private WatchlistRepository watchlistRepository;
 
     private String currentUser = "";
 
@@ -45,6 +46,7 @@ public class IEMDBSystem {
         commentRepository = new CommentRepository();
         userRepository = new UserRepository();
         actorRepository = new ActorRepository();
+        watchlistRepository = new WatchlistRepository();
     }
 
     public IEMDBSystem(DataContext _context){
@@ -231,13 +233,13 @@ public class IEMDBSystem {
     }
 
     public ArrayList<Movie> getWatchList(String userEmail) throws NotFoundException{
-        int userIndex = context.findUser(userEmail);
+        User user = userRepository.getUserByEmail(userEmail);
 
-        if(userIndex < 0){
+        if(user == null){
             throw new NotFoundException("User not found.");
         }
 
-        return context.getUsers().get(userIndex).getWatchList();
+        return watchlistRepository.getWatchlist(userEmail);
     }
 
     public Double calculateScore(ArrayList<Movie> userWatchList, Movie movie){
