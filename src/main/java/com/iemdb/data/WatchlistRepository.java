@@ -7,9 +7,11 @@ import java.util.Map;
 
 public class WatchlistRepository {
     IemdbRepository iemdbRepository;
+    MovieRepository movieRepository;
 
     public WatchlistRepository(){
         iemdbRepository = new IemdbRepository();
+        movieRepository = new MovieRepository();
     }
 
     public ArrayList<Movie> getWatchlist(String userEmail) {
@@ -21,10 +23,8 @@ public class WatchlistRepository {
 
         for (Map<String, Object> row : watchlistMovies) {
             Movie newMovie = new Movie(row);
-            dbQuery = String.format("SELECT g.name FROM genre_movie gm, genre g " +
-                    "WHERE gm.movieId = %d AND gm.genreId = g.id", newMovie.getId());
-            ArrayList<Map<String, Object>> movieGenres = iemdbRepository.sendQuery(dbQuery);
-            newMovie.setGenres(movieGenres);
+
+            newMovie.setGenres(movieRepository.getGenres(newMovie.getId()));
 
             dbQuery = String.format("SELECT w.name FROM writer_movie wm, writer w " +
                     "WHERE wm.movieId = %d AND wm.writerId = w.id", newMovie.getId());

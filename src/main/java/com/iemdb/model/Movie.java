@@ -91,10 +91,8 @@ public class Movie {
         }
     }
 
-    public void setGenres(ArrayList<Map<String, Object>> _genres) {
-        for (Map<String, Object> genre : _genres) {
-            genres.add((String) genre.get("name"));
-        }
+    public void setGenres(ArrayList<String> _genres) {
+        genres = _genres;
     }
 
     public void setWriters(ArrayList<Map<String, Object>> _writers) {
