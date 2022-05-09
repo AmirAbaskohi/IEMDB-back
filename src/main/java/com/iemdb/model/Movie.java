@@ -78,19 +78,8 @@ public class Movie {
     public String getCoverImageUrl(){return coverImageUrl;}
     public ArrayList<Comment> getComments(){return comments;}
 
-    public void setCast(ArrayList<Map<String, Object>> _cast) {
-        for (Map<String, Object> actor : _cast) {
-            LocalDate birthDate;
-            try{
-                birthDate = ((Date)actor.get("birthDate")).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            }catch (Exception e){
-                System.out.println("Cannot Parse The Date!!! In set Actor.");
-                birthDate = null;
-            }
-
-            cast.add(new Actor((Integer) actor.get("id"), (String) actor.get("name"), birthDate,
-                    (String) actor.get("nationality"), (String) actor.get("imageUrl")));
-        }
+    public void setCast(ArrayList<Actor> _cast) {
+        cast = _cast;
     }
 
     public void setComments(ArrayList<Map<String, Object>> _comments) {

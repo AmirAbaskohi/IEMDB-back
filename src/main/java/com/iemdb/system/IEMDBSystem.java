@@ -186,13 +186,14 @@ public class IEMDBSystem {
     }
 
     public ArrayList<AbstractActorInfo> getMovieActors(int movieId) throws NotFoundException{
-        int movieIndex = context.findMovie(movieId);
-        if(movieId < 0){
+        Movie movie = movieRepository.getMovie(movieId);
+        if(movie == null){
             throw new NotFoundException("Movie not found.");
         }
 
+        movie.setCast(movieRepository.getActors(movieId));
+
         ArrayList<AbstractActorInfo> movieActors = new ArrayList<>();
-        Movie movie = context.getMovies().get(movieIndex);
         for (Actor movieActor : movie.getCast()){
             movieActors.add(new AbstractActorInfo(movieActor));
         }
