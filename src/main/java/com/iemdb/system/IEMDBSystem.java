@@ -1,9 +1,6 @@
 package com.iemdb.system;
 
-import com.iemdb.data.CommentRepository;
-import com.iemdb.data.DataContext;
-import com.iemdb.data.MovieRepository;
-import com.iemdb.data.UserRepository;
+import com.iemdb.data.*;
 import com.iemdb.exception.ForbiddenException;
 import com.iemdb.exception.InvalidValueException;
 import com.iemdb.exception.NotFoundException;
@@ -38,6 +35,7 @@ public class IEMDBSystem {
     private MovieRepository movieRepository;
     private CommentRepository commentRepository;
     private UserRepository userRepository;
+    private ActorRepository actorRepository;
 
     private String currentUser = "";
 
@@ -46,6 +44,7 @@ public class IEMDBSystem {
         movieRepository = new MovieRepository();
         commentRepository = new CommentRepository();
         userRepository = new UserRepository();
+        actorRepository = new ActorRepository();
     }
 
     public IEMDBSystem(DataContext _context){
@@ -174,23 +173,17 @@ public class IEMDBSystem {
 //        return result;
 //    }
 //
-//    public ActorInfo getActor(int actorId) throws NotFoundException{
-//        int actorIndex = context.findActor(actorId);
-//
-//        if(actorIndex < 0){
-//            throw new NotFoundException("Actor not found.");
-//        }
-//        Actor actor = context.getActors().get(actorIndex);
-//
-//        ArrayList<Movie> actorMovies = new ArrayList<>();
-//        for(Movie movie: context.getMovies()){
-//            if (movie.hasActor(actorId)){
-//                actorMovies.add(movie);
-//            }
-//        }
-//
-//        return new ActorInfo(actor, actorMovies);
-//    }
+    public ActorInfo getActor(int actorId) throws NotFoundException{
+        Actor actor = actorRepository.getActor(actorId);
+
+        if(actor == null){
+            throw new NotFoundException("Actor not found.");
+        }
+
+        ArrayList<Movie> actorMovies = actorRepository.getActorMovies(actorId);
+
+        return new ActorInfo(actor, actorMovies);
+    }
 
     public ArrayList<AbstractActorInfo> getMovieActors(int movieId) throws NotFoundException{
         int movieIndex = context.findMovie(movieId);
@@ -204,6 +197,20 @@ public class IEMDBSystem {
             movieActors.add(new AbstractActorInfo(movieActor));
         }
         return movieActors;
+    }
+
+    public ArrayList<AbstractMovieInfo> getMoviesByActor(int actorId) throws NotFoundException{
+        Actor actor = actorRepository.getActor(actorId);
+
+        if(actor == null){
+            throw new NotFoundException("Actor not found.");
+        }
+
+        ArrayList<AbstractMovieInfo> result = new ArrayList<>();
+        for (Movie movie: actorRepository.getActorMovies(actorId)){
+            result.add(new AbstractMovieInfo(movie));
+        }
+        return result;
     }
 
     public ArrayList<Comment> getMovieComments(int movieId) throws NotFoundException{
