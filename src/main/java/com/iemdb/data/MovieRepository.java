@@ -142,6 +142,11 @@ public class MovieRepository {
                     userEmail, movieId, score);
         }
         iemdbRepository.updateQuery(query);
+
+        dbQuery = String.format("UPDATE movie\n" +
+                "SET rating = (SELECT SUM(r.score)/COUNT(*) FROM rate r WHERE r.movieId = %d)\n" +
+                "WHERE id = %d;", movieId, movieId);
+        iemdbRepository.updateQuery(dbQuery);
     }
 
     public Rate getRate(String userEmail, int movieId){

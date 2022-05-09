@@ -4,7 +4,6 @@ import com.iemdb.exception.NotFoundException;
 import com.iemdb.info.AbstractMovieInfo;
 import com.iemdb.info.ActorInfo;
 import com.iemdb.info.ResponseInfo;
-import com.iemdb.model.Movie;
 import com.iemdb.system.IEMDBSystem;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -32,7 +31,7 @@ public class ActorService {
         }
 
         try {
-            ActorInfo actorInfo = iemdbSystem.getActor(actorId);
+            ActorInfo actorInfo = iemdbSystem.getActorById(actorId);
             ResponseInfo response = new ResponseInfo(actorInfo, true, "Actor returned successfully.");
             return new ResponseEntity<>(response, HttpStatus.OK);
         }

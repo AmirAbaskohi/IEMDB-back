@@ -9,14 +9,7 @@ import com.iemdb.info.AbstractMovieInfo;
 import com.iemdb.info.AccountInfo;
 import com.iemdb.info.ActorInfo;
 import com.iemdb.model.*;
-import org.apache.commons.lang.StringUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -30,8 +23,6 @@ public class IEMDBSystem {
         return iemdbSystem;
     }
 
-    private DataContext context;
-
     private MovieRepository movieRepository;
     private CommentRepository commentRepository;
     private UserRepository userRepository;
@@ -41,16 +32,11 @@ public class IEMDBSystem {
     private String currentUser = "";
 
     public IEMDBSystem(){
-        context = new DataContext();
         movieRepository = new MovieRepository();
         commentRepository = new CommentRepository();
         userRepository = new UserRepository();
         actorRepository = new ActorRepository();
         watchlistRepository = new WatchlistRepository();
-    }
-
-    public IEMDBSystem(DataContext _context){
-        context = _context;
     }
 
     public Comment addComment(String userEmail, String text, int movieId) throws NotFoundException{
@@ -160,7 +146,7 @@ public class IEMDBSystem {
         return movie;
     }
 
-    public ActorInfo getActor(int actorId) throws NotFoundException{
+    public ActorInfo getActorById(int actorId) throws NotFoundException{
         Actor actor = actorRepository.getActor(actorId);
 
         if(actor == null){
@@ -210,20 +196,18 @@ public class IEMDBSystem {
     }
 
     public User getUser(String userEmail) throws NotFoundException{
-        int userIndex = context.findUser(userEmail);
-        if(userIndex < 0 ){
+        User user = userRepository.getUserByEmail(userEmail);
+        if(user == null){
             throw new NotFoundException("User Not Found.");
         }
-        return context.getUsers().get(userIndex);
+        return user;
     }
 
     public ArrayList<Movie> getWatchList(String userEmail) throws NotFoundException{
         User user = userRepository.getUserByEmail(userEmail);
-
         if(user == null){
             throw new NotFoundException("User not found.");
         }
-
         return watchlistRepository.getWatchlist(userEmail);
     }
 
@@ -247,14 +231,17 @@ public class IEMDBSystem {
     }
 
     public ArrayList<Movie> getRecommendationList(String userEmail) throws NotFoundException{
-        int userIndex = context.findUser(userEmail);
+        User user = userRepository.getUserByEmail(userEmail);
 
-        if(userIndex < 0){
+        if(user == null){
             throw new NotFoundException("User not found.");
         }
 
-        ArrayList<Movie> userWatchList = context.getUsers().get(userIndex).getWatchList();
-        ArrayList<Movie> recommendationList =new ArrayList<>(context.getMovies());
+        ArrayList<Movie> userWatchList = watchlistRepository.getWatchlist(userEmail);
+        ArrayList<Movie> recommendationList =new ArrayList<>(movieRepository.getMovies(null, null, null));
+        for (Movie movie : recommendationList){
+            movie.setGenres(movieRepository.getGenres(movie.getId()));
+        }
         recommendationList.sort(Comparator.comparing(o -> calculateScore(userWatchList, o)));
         Collections.reverse(recommendationList);
 
@@ -262,8 +249,10 @@ public class IEMDBSystem {
         ArrayList<Movie> result = new ArrayList<>();
 
         for (Movie movie: recommendationList){
-            if(numOfRecommendations > 2) break;
-            if(userWatchList.contains(movie)) continue;
+            if(numOfRecommendations > 2)
+                break;
+            if(userWatchList.contains(movie))
+                continue;
             result.add(movie);
             numOfRecommendations += 1;
         }
