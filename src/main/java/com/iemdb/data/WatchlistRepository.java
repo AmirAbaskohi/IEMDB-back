@@ -14,6 +14,12 @@ public class WatchlistRepository {
         movieRepository = new MovieRepository();
     }
 
+    public boolean existsInWatchlist(int movieId, String userEmail) {
+        String dbQuery = "SELECT * FROM watchlist ";
+        dbQuery += "WHERE movieId = " + movieId + " AND userEmail = '" + userEmail + "';";
+        return iemdbRepository.sendQuery(dbQuery).size() != 0;
+    }
+
     public void addToWatchlist(int movieId, String userEmail) {
         String dbQuery = "SELECT * FROM watchlist ";
         dbQuery += "WHERE movieId = " + movieId + " AND userEmail = '" + userEmail + "';";
