@@ -91,16 +91,12 @@ public class Movie {
         }
     }
 
-    public void setGenres(ArrayList<Map<String, Object>> _genres) {
-        for (Map<String, Object> genre : _genres) {
-            genres.add((String) genre.get("name"));
-        }
+    public void setGenres(ArrayList<String> _genres) {
+        genres = _genres;
     }
 
-    public void setWriters(ArrayList<Map<String, Object>> _writers) {
-        for (Map<String, Object> writer : _writers) {
-            writers.add((String) writer.get("name"));
-        }
+    public void setWriters(ArrayList<String> _writers) {
+        writers = _writers;
     }
 
     public int compareByReleaseDate(Movie movie2){
