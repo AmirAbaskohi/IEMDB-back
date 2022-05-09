@@ -160,22 +160,6 @@ public class IEMDBSystem {
         return movie;
     }
 
-//    public ArrayList<AbstractMovieInfo> getMoviesByActor(int actorId) throws NotFoundException{
-//        int actorIndex = context.findActor(actorId);
-//
-//        if(actorIndex < 0){
-//            throw new NotFoundException("Actor not found.");
-//        }
-//
-//        ArrayList<AbstractMovieInfo> result = new ArrayList<>();
-//        for (Movie movie: context.getMovies()){
-//            if(movie.hasActor(actorId)){
-//                result.add(new AbstractMovieInfo(movie));
-//            }
-//        }
-//        return result;
-//    }
-//
     public ActorInfo getActor(int actorId) throws NotFoundException{
         Actor actor = actorRepository.getActor(actorId);
 
