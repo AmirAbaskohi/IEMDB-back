@@ -81,20 +81,12 @@ public class Movie {
     public void setCast(ArrayList<Actor> _cast) {
         cast = _cast;
     }
-
-    public void setComments(ArrayList<Map<String, Object>> _comments) {
-        for (Map<String, Object> comment : _comments) {
-            comments.add(new Comment((Integer) comment.get("id"),
-                                    (String) comment.get("userEmail"),
-                                    id,
-                                    (String) comment.get("text")));
-        }
+    public void setComments(ArrayList<Comment> _comments) {
+        comments = _comments;
     }
-
     public void setGenres(ArrayList<String> _genres) {
         genres = _genres;
     }
-
     public void setWriters(ArrayList<String> _writers) {
         writers = _writers;
     }
