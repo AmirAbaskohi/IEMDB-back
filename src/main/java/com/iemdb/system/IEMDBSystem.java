@@ -292,14 +292,8 @@ public class IEMDBSystem {
     public String getCurrentUser(){return currentUser;}
 
     public AccountInfo login(String email, String password) throws NotFoundException{
-        ArrayList<User> users = context.getUsers();
-        User foundedUser = null;
-        for (User user: users) {
-            if (user.getEmail().equals(email)) {
-                foundedUser = user;
-                break;
-            }
-        }
+        User foundedUser = userRepository.getUserByEmail(email);
+
         if (foundedUser == null) {
             throw new NotFoundException("UserNotFound");
         }
