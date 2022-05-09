@@ -25,11 +25,8 @@ public class WatchlistRepository {
             Movie newMovie = new Movie(row);
 
             newMovie.setGenres(movieRepository.getGenres(newMovie.getId()));
+            newMovie.setWriters(movieRepository.getWriters(newMovie.getId()));
 
-            dbQuery = String.format("SELECT w.name FROM writer_movie wm, writer w " +
-                    "WHERE wm.movieId = %d AND wm.writerId = w.id", newMovie.getId());
-            ArrayList<Map<String, Object>> movieWriters = iemdbRepository.sendQuery(dbQuery);
-            newMovie.setWriters(movieWriters);
             result.add(newMovie);
         }
         return result;

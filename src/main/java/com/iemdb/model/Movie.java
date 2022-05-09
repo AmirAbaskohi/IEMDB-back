@@ -95,10 +95,8 @@ public class Movie {
         genres = _genres;
     }
 
-    public void setWriters(ArrayList<Map<String, Object>> _writers) {
-        for (Map<String, Object> writer : _writers) {
-            writers.add((String) writer.get("name"));
-        }
+    public void setWriters(ArrayList<String> _writers) {
+        writers = _writers;
     }
 
     public int compareByReleaseDate(Movie movie2){

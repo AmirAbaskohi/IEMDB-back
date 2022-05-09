@@ -104,11 +104,7 @@ public class MovieRepository {
         Movie wantedMovie = new Movie(queryResult.get(0));
 
         wantedMovie.setGenres(getGenres(movieId));
-
-        dbQuery = String.format("SELECT w.name FROM writer_movie wm, writer w " +
-                "WHERE wm.movieId = %d AND wm.writerId = w.id", movieId);
-        ArrayList<Map<String, Object>> movieWriters = iemdbRepository.sendQuery(dbQuery);
-        wantedMovie.setWriters(movieWriters);
+        wantedMovie.setWriters(getWriters(movieId));
 
         return wantedMovie;
     }
@@ -181,5 +177,16 @@ public class MovieRepository {
             movieGenres.add((String) row.get("name"));
         }
         return movieGenres;
+    }
+
+    public ArrayList<String> getWriters(int movieId){
+        String dbQuery = String.format("SELECT w.name FROM writer_movie wm, writer w " +
+                "WHERE wm.movieId = %d AND wm.writerId = w.id", movieId);
+        ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(dbQuery);
+        ArrayList<String> movieWriters = new ArrayList<>();
+        for (Map<String, Object> row : queryResult) {
+            movieWriters.add((String) row.get("name"));
+        }
+        return movieWriters;
     }
 }
