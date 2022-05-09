@@ -94,7 +94,7 @@ public class MovieService {
                     existsInWatchlist = true;
                     break;
                 }
-            MovieInfo movieInfo = new MovieInfo(selectedMovie, existsInWatchlist);
+            MovieInfo movieInfo = new MovieInfo(selectedMovie, existsInWatchlist, iemdbSystem.getMovieRates(movieId).size());
             ResponseInfo response = new ResponseInfo(movieInfo, true, "Movie returned successfully.");
             return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (NotFoundException e){

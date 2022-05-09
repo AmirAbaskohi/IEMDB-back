@@ -15,14 +15,14 @@ public class MovieInfo {
     private final Double rating;
     private final ArrayList<String> genres;
     private final ArrayList<String> writers;
-    private final int numberOfRates = 0;
+    private final int numberOfRates;
     private final double imdbRate;
     private final int ageLimit;
     private final int duration;
     private final boolean existsInWatchlist;
 
 
-    public MovieInfo(Movie movie, boolean _existsInWatchlist){
+    public MovieInfo(Movie movie, boolean _existsInWatchlist, int _numberOfRates){
         id = movie.getId();
         name = movie.getName();
         summary = movie.getSummary();
@@ -33,8 +33,7 @@ public class MovieInfo {
         rating = movie.getRating();
         genres = movie.getGenres();
         writers = movie.getWriters();
-        // TODO
-//        numberOfRates = movie.getRates().size();
+        numberOfRates = _numberOfRates;
         imdbRate = movie.getImdbRate();
         ageLimit = movie.getAgeLimit();
         duration = movie.getDuration();

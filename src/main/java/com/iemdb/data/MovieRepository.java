@@ -163,4 +163,15 @@ public class MovieRepository {
         }
         return null;
     }
+
+    public ArrayList<Rate> getRates(int movieId){
+        String dbQuery = String.format("select * from rate r " +
+                "where r.movieId=%d", movieId);
+        ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(dbQuery);
+        ArrayList<Rate> movieRates = new ArrayList<>();
+        for (Map<String, Object> row : queryResult) {
+            movieRates.add(new Rate(row));
+        }
+        return movieRates;
+    }
 }

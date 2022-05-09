@@ -285,6 +285,10 @@ public class IEMDBSystem {
         return result;
     }
 
+    public ArrayList<Rate> getMovieRates(int movieId) {
+        return movieRepository.getRates(movieId);
+    }
+
     public String getCurrentUser(){return currentUser;}
 
     public AccountInfo login(String email, String password) throws NotFoundException{
