@@ -9,15 +9,15 @@ public class AbstractActorInfo {
     private final String name;
     private final String image;
     private int age;
-    private final String birthDate;
+    private String birthDate;
 
     public AbstractActorInfo(Actor actor){
         id = actor.getId();
         name = actor.getName();
         image = actor.getImageUrl();
-        birthDate = actor.getBirthDate().toString();
         try {
-            age = LocalDate.now().getYear() - Integer.parseInt(birthDate.split(", ", 2)[1]);
+            birthDate = actor.getBirthDate().toString();
+            age = LocalDate.now().getYear() - actor.getBirthDate().getYear();
         }
         catch (Exception ex) {
             age = -1;

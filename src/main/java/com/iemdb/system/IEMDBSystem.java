@@ -91,7 +91,7 @@ public class IEMDBSystem {
         }
 
         commentRepository.addVote(userEmail, commentId, vote);
-        return comment;
+        return commentRepository.getCommentById(commentId);
     }
 
     public Movie addToWatchList(String userEmail, int movieId) throws NotFoundException, ForbiddenException, InvalidValueException {

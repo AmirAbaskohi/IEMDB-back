@@ -30,17 +30,18 @@ public class WatchlistRepository {
     }
 
     public void removeFromWatchlist(int movieId, String userEmail) {
-        String dbQuery = "SELECT * FROM watchlist ";
-        dbQuery += "WHERE movieId = " + movieId + " AND userEmail = '" + userEmail + "';";
+        String dbQuery = String.format("SELECT * FROM watchlist " +
+                "WHERE movieId = %d AND userEmail = '%s';", movieId, userEmail);
         if (iemdbRepository.sendQuery(dbQuery).size() != 0) {
-            dbQuery = "DELETE FROM table_name WHERE movieId = " + " AND userEmail = '" + userEmail + "'ل;";
+            dbQuery = String.format("DELETE FROM watchlist " +
+                    "WHERE movieId = %d And userEmail = '%s';",movieId,userEmail);
             iemdbRepository.updateQuery(dbQuery);
         }
     }
 
     public ArrayList<Movie> getWatchlist(String userEmail) {
-        String dbQuery = "SELECT * FROM watchlist wl, movie m";
-        dbQuery += "WHERE wl.userEmail = '" + userEmail + "' AND wl.movieId = m.id;";
+        String dbQuery = String.format("SELECT * FROM watchlist wl, movie m " +
+                "WHERE wl.userEmail = '%s' AND wl.movieId = m.id;", userEmail);
 
         ArrayList<Map<String, Object>> watchlistMovies = iemdbRepository.sendQuery(dbQuery);
         ArrayList<Movie> result = new ArrayList<>();

@@ -116,8 +116,11 @@ public class MovieService {
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
         try {
-            Rate rate = iemdbSystem.rateMovie(iemdbSystem.getCurrentUser(), movieId, score);
-            ResponseInfo response = new ResponseInfo(new MovieRateInfo(iemdbSystem.getMovieById(movieId)),true, "Movie rated successfully.");
+            iemdbSystem.rateMovie(iemdbSystem.getCurrentUser(), movieId, score);
+            MovieRateInfo movieRateInfo = new MovieRateInfo(iemdbSystem.getMovieById(movieId),
+                    iemdbSystem.getMovieRates(movieId).size());
+            ResponseInfo response = new ResponseInfo(movieRateInfo,
+                    true, "Movie rated successfully.");
             return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
         }
         catch (NotFoundException ex) {

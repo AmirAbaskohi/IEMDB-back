@@ -35,6 +35,8 @@ public class Movie {
 
     private static final DecimalFormat df = new DecimalFormat("0.0");
 
+
+
     public Movie(Map<String, Object> _movieInfo){
         writers = new ArrayList<>();
         genres = new ArrayList<>();
@@ -50,6 +52,10 @@ public class Movie {
         imageUrl = (String) _movieInfo.get("imageUrl");
         coverImageUrl = (String) _movieInfo.get("coverImageUrl");
         rating = (Double) _movieInfo.get("rating");
+
+        if(rating != null){
+            rating = Double.valueOf(df.format(rating));
+        }
 
         try{
             releaseDate = ((Date)_movieInfo.get("releaseDate")).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();

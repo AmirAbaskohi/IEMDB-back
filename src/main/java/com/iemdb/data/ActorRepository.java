@@ -19,18 +19,10 @@ public class ActorRepository {
     public Actor getActor(int id) {
         String dbQuery = String.format("SELECT * FROM actor WHERE Id = %d;", id);
         ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(dbQuery);
-        if (queryResult.size() == 0)
-            return null;
-        Map<String, Object> wantedRow = queryResult.get(0);
-        LocalDate birthDate;
-        try{
-            birthDate = ((Date)wantedRow.get("birthDate")).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        }catch (Exception e){
-            System.out.println("Cannot Parse The Date!!! In set Actor.");
-            birthDate = null;
+        if (queryResult.size() > 0){
+            return new Actor(queryResult.get(0));
         }
-        return new Actor((Integer) wantedRow.get("id"), (String) wantedRow.get("name"),
-                birthDate, (String) wantedRow.get("nationality"), (String) wantedRow.get("imageUrl"));
+        return null;
     }
 
     public ArrayList<Movie> getActorMovies(int actorId) {

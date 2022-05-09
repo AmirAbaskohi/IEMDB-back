@@ -6,9 +6,9 @@ public class MovieRateInfo {
     private int numberOfRates;
     private Double rating;
 
-    public MovieRateInfo(Movie movie) {
+    public MovieRateInfo(Movie movie, int _numberOfRates) {
         rating = movie.getRating();
-//        numberOfRates = movie.getRates().size();
+        numberOfRates = _numberOfRates;
     }
 
     public int getNumberOfRates() {return numberOfRates;}

@@ -115,16 +115,8 @@ public class MovieRepository {
                 "WHERE am.movieId = %d AND a.id = am.actorId;", movieId);
         ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(dbQuery);
         for (Map<String, Object> row : queryResult) {
-            LocalDate birthDate;
-            try{
-                birthDate = ((Date)row.get("birthDate")).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            }catch (Exception e){
-                System.out.println("Cannot Parse The Date!!! In set Actor.");
-                birthDate = null;
-            }
-            Actor actor = new Actor((Integer) row.get("id"), (String) row.get("name"),
-                    birthDate, (String) row.get("nationality"), (String) row.get("imageUrl"));
-            result.add(actor);
+            Actor newActor = new Actor(row);
+            result.add(newActor);
         }
         return result;
     }

@@ -22,7 +22,7 @@ public class UserRepository {
     }
 
     public User getUserByEmail(String userEmail){
-        String query = String.format("select * from user u where u.email=%s", userEmail);
+        String query = String.format("select * from user u where u.email='%s'", userEmail);
         ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(query);
         if(queryResult.size() > 0){
             User newUser = new User(queryResult.get(0));

@@ -3,6 +3,9 @@ package com.iemdb.model;
 import org.json.JSONObject;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.Map;
 
 public class Actor {
     private int id;
@@ -17,6 +20,19 @@ public class Actor {
         birthDate = _birthDate;
         nationality = _nationality;
         imageUrl = _imageUrl;
+    }
+
+    public Actor(Map<String, Object> data){
+        id = (Integer)data.get("id");
+        name = (String) data.get("name");
+        try{
+            birthDate = ((Date)data.get("birthDate")).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        }catch (Exception e){
+            System.out.println("Cannot Parse The Date!!! In set Actor.");
+            birthDate = null;
+        }
+        nationality = (String) data.get("nationality");
+        imageUrl = (String) data.get("imageUrl");
     }
 
     public void update(Actor _actor){

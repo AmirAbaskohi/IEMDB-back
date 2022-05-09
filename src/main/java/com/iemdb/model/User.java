@@ -24,7 +24,10 @@ public class User {
         password = (String) data.get("password");
         nickName = (String) data.get("nickName");
         name = (String) data.get("name");
-        birthDate = ((Date)data.get("birthDate")).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        if(data.get("birthDate") != null){
+            birthDate = ((Date)data.get("birthDate")).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        }
+
     }
 
     public void update(User _user){
