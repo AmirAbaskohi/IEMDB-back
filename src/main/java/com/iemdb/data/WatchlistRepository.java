@@ -15,15 +15,20 @@ public class WatchlistRepository {
     public void addToWatchlist(int movieId, String userEmail) {
         String dbQuery = "SELECT * FROM watchlist ";
         dbQuery += "WHERE movieId = " + movieId + " AND userEmail = '" + userEmail + "';";
-        if (iemdbRepository.sendQuery(dbQuery).size() != 0) {
+        if (iemdbRepository.sendQuery(dbQuery).size() == 0) {
             dbQuery = "INSERT INTO watchlist VALUES (" + movieId + ",'" + userEmail + "');";
             iemdbRepository.updateQuery(dbQuery);
         }
     }
 
-//    public void removeFromWatchlist() {
-//
-//    }
+    public void removeFromWatchlist(int movieId, String userEmail) {
+        String dbQuery = "SELECT * FROM watchlist ";
+        dbQuery += "WHERE movieId = " + movieId + " AND userEmail = '" + userEmail + "';";
+        if (iemdbRepository.sendQuery(dbQuery).size() != 0) {
+            dbQuery = "DELETE FROM table_name WHERE movieId = " + " AND userEmail = '" + userEmail + "'ل;";
+            iemdbRepository.updateQuery(dbQuery);
+        }
+    }
 
     public ArrayList<Movie> getWatchlist(String userEmail) {
         String dbQuery = "SELECT * FROM watchlist wl, movie m";
