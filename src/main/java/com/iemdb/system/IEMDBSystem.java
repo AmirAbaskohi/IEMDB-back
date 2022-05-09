@@ -150,11 +150,11 @@ public class IEMDBSystem {
     }
 
     public Movie getMovieById(int id) throws NotFoundException{
-        int movieIndex = context.findMovie(id);
-        if(movieIndex < 0){
+        Movie movie = movieRepository.getMovie(id);
+        if(movie == null){
             throw new NotFoundException("MovieNotFound");
         }
-        return context.getMovies().get(movieIndex);
+        return movie;
     }
 
 //    public ArrayList<AbstractMovieInfo> getMoviesByActor(int actorId) throws NotFoundException{
