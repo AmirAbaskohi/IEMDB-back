@@ -109,18 +109,16 @@ public class IEMDBSystem {
     }
 
     public Movie addToWatchList(String userEmail, int movieId) throws NotFoundException, ForbiddenException, InvalidValueException {
-        int userIndex = context.findUser(userEmail);
-        int movieIndex = context.findMovie(movieId);
-        if(userIndex < 0){
+        User user = userRepository.getUserByEmail(userEmail);
+        Movie movie = movieRepository.getMovie(movieId);
+        if(user == null){
             throw new NotFoundException("User not found.");
         }
-        if(movieIndex < 0){
+        if(movie == null){
             throw new NotFoundException("Movie not found.");
         }
-        User user = context.getUsers().get(userIndex);
-        Movie movie = context.getMovies().get(movieIndex);
 
-        if(user.hasMovieInWatchList(movie.getId())){
+        if(watchlistRepository.existsInWatchlist(movieId, userEmail)){
             throw new InvalidValueException("Movie already exists.");
         }
 
@@ -128,23 +126,26 @@ public class IEMDBSystem {
             throw new ForbiddenException("Age is not enough.");
         }
 
-        user.addMovie(movie);
+        watchlistRepository.addToWatchlist(movieId, userEmail);
         return movie;
     }
 
     public Movie removeFromWatchList(String userEmail, int movieId) throws NotFoundException {
-        int userIndex = context.findUser(userEmail);
-        if(userIndex < 0){
+        User user = userRepository.getUserByEmail(userEmail);
+        Movie movie = movieRepository.getMovie(movieId);
+        if(user == null){
             throw new NotFoundException("User not found.");
         }
-        User user = context.getUsers().get(userIndex);
+        if(movie == null){
+            throw new NotFoundException("Movie not found.");
+        }
 
-        if(!user.hasMovieInWatchList(movieId)){
+        if(!watchlistRepository.existsInWatchlist(movieId, userEmail)){
             throw new NotFoundException("Movie does not exist in the watchlist.");
         }
 
-        user.removeMovie(movieId);
-        return getMovieById(movieId);
+        watchlistRepository.removeFromWatchlist(movieId, userEmail);
+        return movie;
     }
 
     public ArrayList<Movie> getMovies(Integer queryType, String query, String sort) {
