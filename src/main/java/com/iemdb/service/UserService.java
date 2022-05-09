@@ -45,7 +45,6 @@ public class UserService {
 
     @RequestMapping(value = "/watchlist", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseInfo> getWatchlist() {
-        System.out.println("We Are in watchlist!!!!!!!!!!!!!!!");
         if (iemdbSystem.getCurrentUser() == null ||
                 iemdbSystem.getCurrentUser().isBlank() ||
                 iemdbSystem.getCurrentUser().isEmpty()) {

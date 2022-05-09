@@ -204,6 +204,11 @@ public class IEMDBSystem {
     }
 
     public ArrayList<Movie> getWatchList(String userEmail) throws NotFoundException{
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         User user = userRepository.getUserByEmail(userEmail);
         if(user == null){
             throw new NotFoundException("User not found.");
@@ -231,6 +236,11 @@ public class IEMDBSystem {
     }
 
     public ArrayList<Movie> getRecommendationList(String userEmail) throws NotFoundException{
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         User user = userRepository.getUserByEmail(userEmail);
 
         if(user == null){
@@ -248,11 +258,20 @@ public class IEMDBSystem {
         int numOfRecommendations = 0;
         ArrayList<Movie> result = new ArrayList<>();
 
+        boolean movieExist = false;
         for (Movie movie: recommendationList){
             if(numOfRecommendations > 2)
                 break;
-            if(userWatchList.contains(movie))
+            for(Movie m: userWatchList){
+                if(m.getId() == movie.getId()){
+                    movieExist = true;
+                    break;
+                }
+            }
+            if(movieExist){
+                movieExist = false;
                 continue;
+            }
             result.add(movie);
             numOfRecommendations += 1;
         }
