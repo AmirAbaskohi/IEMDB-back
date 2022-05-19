@@ -1,18 +1,12 @@
 package com.iemdb.system;
 
 import com.iemdb.data.*;
-import com.iemdb.exception.ForbiddenException;
-import com.iemdb.exception.InvalidValueException;
-import com.iemdb.exception.NotFoundException;
-import com.iemdb.info.AbstractActorInfo;
-import com.iemdb.info.AbstractMovieInfo;
-import com.iemdb.info.AccountInfo;
-import com.iemdb.info.ActorInfo;
+import com.iemdb.exception.*;
+import com.iemdb.info.*;
 import com.iemdb.model.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.*;
+
 
 public class IEMDBSystem {
     public static IEMDBSystem iemdbSystem;
@@ -23,11 +17,11 @@ public class IEMDBSystem {
         return iemdbSystem;
     }
 
-    private MovieRepository movieRepository;
-    private CommentRepository commentRepository;
-    private UserRepository userRepository;
-    private ActorRepository actorRepository;
-    private WatchlistRepository watchlistRepository;
+    private final MovieRepository movieRepository;
+    private final CommentRepository commentRepository;
+    private final UserRepository userRepository;
+    private final ActorRepository actorRepository;
+    private final WatchlistRepository watchlistRepository;
 
     private String currentUser = "";
 
