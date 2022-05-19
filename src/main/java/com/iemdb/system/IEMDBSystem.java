@@ -4,6 +4,7 @@ import com.iemdb.data.*;
 import com.iemdb.exception.*;
 import com.iemdb.info.*;
 import com.iemdb.model.*;
+import com.iemdb.utils.Util;
 
 import java.util.*;
 
@@ -280,11 +281,12 @@ public class IEMDBSystem {
 
     public AccountInfo login(String email, String password) throws NotFoundException{
         User foundedUser = userRepository.getUserByEmail(email);
+        String passHash = Util.toHexString(Util.getSHA(password));
 
         if (foundedUser == null) {
             throw new NotFoundException("UserNotFound");
         }
-        if (!foundedUser.getPassword().equals(password)) {
+        if (!foundedUser.getPassword().equals(passHash)) {
             throw new RuntimeException("UserNameOrPasswordWrong");
         }
         currentUser = email;

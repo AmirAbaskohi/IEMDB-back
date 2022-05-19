@@ -76,9 +76,15 @@ public class Util {
         }
     }
 
-    public static byte[] getSHA(String input) throws NoSuchAlgorithmException{
-        MessageDigest md = MessageDigest.getInstance("SHA-256");
-        return md.digest(input.getBytes(StandardCharsets.UTF_8));
+    public static byte[] getSHA(String input){
+        try{
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            return md.digest(input.getBytes(StandardCharsets.UTF_8));
+        }
+        catch (NoSuchAlgorithmException e) {
+            System.out.println("Exception thrown for incorrect algorithm: " + e);
+            return null;
+        }
     }
 
     public static String toHexString(byte[] hash)

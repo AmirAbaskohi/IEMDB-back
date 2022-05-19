@@ -2,13 +2,10 @@ package com.iemdb.data;
 
 import com.iemdb.utils.Util;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import org.json.*;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.*;
+import java.net.*;
 import java.sql.*;
 import java.util.*;
 
@@ -138,9 +135,10 @@ public class IemdbRepository {
         boolean commaNeeded = false;
         for (Object data : jsonArray){
             JSONObject userData = (JSONObject) data;
+            String passHash = Util.toHexString(Util.getSHA(userData.getString("password")));
             query += commaNeeded ? ",(" : "(";
             query += "'" + userData.getString("email") + "',";
-            query += "'" + userData.getString("password") + "',";
+            query += "'" + passHash + "',";
             query += "'" + userData.getString("name") + "',";
             query += "'" + userData.getString("nickname") + "',";
             query += "'" + userData.getString("birthDate") + "'";
