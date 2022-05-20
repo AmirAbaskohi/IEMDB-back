@@ -279,8 +279,8 @@ public class IEMDBSystem {
 
     public String getCurrentUser(){return currentUser;}
 
-    public AccountInfo login(String email, String password) throws NotFoundException{
-        User foundedUser = userRepository.getUserByEmail(email);
+    public AccountInfo login(String userEmail, String password) throws NotFoundException{
+        User foundedUser = userRepository.getUserByEmail(userEmail);
         String passHash = Util.toHexString(Util.getSHA(password));
 
         if (foundedUser == null) {
@@ -288,9 +288,22 @@ public class IEMDBSystem {
         }
         if (!foundedUser.getPassword().equals(passHash)) {
             throw new RuntimeException("UserNameOrPasswordWrong");
+
         }
-        currentUser = email;
-        return new AccountInfo(email);
+        currentUser = userEmail;
+        return new AccountInfo(userEmail);
+    }
+
+    public AccountInfo signUp(String name, String nickName, String userEmail, String password, String birthDate)
+    throws AlreadyExistsException{
+        String passHash = Util.toHexString(Util.getSHA(password));
+        User foundedUser = userRepository.getUserByEmail(userEmail);
+        if (foundedUser != null) {
+            throw new AlreadyExistsException("UserAlreadyExists");
+        }
+        currentUser = userEmail;
+        userRepository.addUser(name, nickName, userEmail, passHash, birthDate);
+        return new AccountInfo(userEmail);
     }
 
     public void logout(){currentUser = "";}

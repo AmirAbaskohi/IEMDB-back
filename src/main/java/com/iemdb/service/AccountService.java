@@ -26,15 +26,32 @@ public class AccountService {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseInfo> login(@RequestParam(value = "email") String email,
+    public ResponseEntity<ResponseInfo> login(@RequestParam(value = "userEmail") String userEmail,
                                              @RequestParam(value = "password") String password) {
         try{
-            AccountInfo account = iemdbSystem.login(email, password);
+            AccountInfo account = iemdbSystem.login(userEmail, password);
             ResponseInfo response = new ResponseInfo(account, true, "Logged in successfully.");
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         catch (Exception ex) {
             ResponseInfo response = new ResponseInfo(null, false, "Logging in failed.");
+            response.addError(ex.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    @RequestMapping(value = "/signup", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseInfo> signup(@RequestParam(value = "name") String name,
+                                               @RequestParam(value = "userEmail") String userEmail,
+                                               @RequestParam(value = "birthDate") String birthDate,
+                                               @RequestParam(value = "password") String password) {
+        try{
+            AccountInfo account = iemdbSystem.signUp(name, name, userEmail, password, birthDate);
+            ResponseInfo response = new ResponseInfo(account, true, "Signed up successfully.");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        catch (Exception ex) {
+            ResponseInfo response = new ResponseInfo(null, false, "Signed up failed.");
             response.addError(ex.getMessage());
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }

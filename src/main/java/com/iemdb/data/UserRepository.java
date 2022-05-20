@@ -1,6 +1,8 @@
 package com.iemdb.data;
 
 import com.iemdb.model.*;
+import com.iemdb.utils.Util;
+
 import java.util.*;
 
 public class UserRepository {
@@ -25,11 +27,14 @@ public class UserRepository {
         String query = String.format("select * from user u where u.email='%s'", userEmail);
         ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(query);
         if(queryResult.size() > 0){
-            User newUser = new User(queryResult.get(0));
-            return newUser;
-        }else{
-            System.out.println("User does not exist");
+            return new User(queryResult.get(0));
         }
         return null;
+    }
+
+    public void addUser(String name, String nickName, String userEmail, String password, String birthDate){
+        String query = String.format("INSERT INTO user VALUES ('%s', '%s', '%s', '%s', '%s')",
+                userEmail, password, name, nickName, birthDate);
+        iemdbRepository.updateQuery(query);
     }
 }
