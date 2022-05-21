@@ -1,12 +1,7 @@
 package com.iemdb.model;
 
-import org.json.JSONObject;
-
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Map;
+import java.time.*;
+import java.util.*;
 
 public class User {
     private String email;
@@ -25,7 +20,7 @@ public class User {
         nickName = (String) data.get("nickName");
         name = (String) data.get("name");
         if(data.get("birthDate") != null){
-            birthDate = ((Date)data.get("birthDate")).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            birthDate = ((LocalDateTime)data.get("birthDate")).toLocalDate();
         }
 
     }

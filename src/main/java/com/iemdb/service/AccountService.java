@@ -19,7 +19,7 @@ public class AccountService {
 
     @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseInfo> getCurrentUser() {
-        AccountInfo accountInfo = new AccountInfo(iemdbSystem.getCurrentUser());
+        AccountInfo accountInfo = new AccountInfo(iemdbSystem.getCurrentUser(), "");
         boolean isLoggedIn = accountInfo.getIsLoggedIn();
         ResponseInfo response = new ResponseInfo(accountInfo, isLoggedIn, "Current user returned successfully.");
         return new ResponseEntity<>(response, HttpStatus.OK);

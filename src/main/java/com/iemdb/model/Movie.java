@@ -1,17 +1,8 @@
 package com.iemdb.model;
 
-import io.swagger.models.auth.In;
-import org.json.JSONObject;
-
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Map;
+import java.text.*;
+import java.time.*;
+import java.util.*;
 
 public class Movie {
     private int id;
@@ -58,9 +49,9 @@ public class Movie {
         }
 
         try{
-            releaseDate = ((Date)_movieInfo.get("releaseDate")).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            releaseDate = ((LocalDateTime)_movieInfo.get("releaseDate")).toLocalDate();
         }catch (Exception e){
-            System.out.println("Cannot Parse The Date!!!");
+            //do nothing
         }
     }
 

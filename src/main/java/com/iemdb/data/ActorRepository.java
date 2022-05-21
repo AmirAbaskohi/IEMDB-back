@@ -1,13 +1,8 @@
 package com.iemdb.data;
 
-import com.iemdb.model.Actor;
-import com.iemdb.model.Movie;
+import com.iemdb.model.*;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 public class ActorRepository {
     IemdbRepository iemdbRepository;

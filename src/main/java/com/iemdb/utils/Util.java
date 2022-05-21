@@ -83,7 +83,7 @@ public class Util {
         }
         catch (NoSuchAlgorithmException e) {
             System.out.println("Exception thrown for incorrect algorithm: " + e);
-            return null;
+            return input.getBytes(StandardCharsets.UTF_8);
         }
     }
 

@@ -5,6 +5,19 @@ import com.iemdb.exception.*;
 import com.iemdb.info.*;
 import com.iemdb.model.*;
 import com.iemdb.utils.Util;
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+
+import javax.crypto.spec.SecretKeySpec;
+import java.math.*;
+import java.nio.charset.*;
+import java.security.*;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
+import java.util.UUID;
 
 import java.util.*;
 
@@ -279,6 +292,23 @@ public class IEMDBSystem {
 
     public String getCurrentUser(){return currentUser;}
 
+    public String createJWT(String userEmail){
+        SignatureAlgorithm alg = SignatureAlgorithm.HS256;
+        String key = "iemdb1401";
+        Key signKey = new SecretKeySpec(Util.getSHA(key), alg.getJcaName());
+        Instant now = Instant.now();
+
+        JwtBuilder jwtBuilder = Jwts.builder()
+                .claim("userEmail", userEmail)
+                .setId(UUID.randomUUID().toString())
+                .setIssuer("IEMDB")
+                .setIssuedAt(Date.from(now))
+                .setExpiration(Date.from(now.plus(24L, ChronoUnit.HOURS)))
+                .signWith(signKey, alg);
+
+        return jwtBuilder.compact();
+    }
+
     public AccountInfo login(String userEmail, String password) throws NotFoundException{
         User foundedUser = userRepository.getUserByEmail(userEmail);
         String passHash = Util.toHexString(Util.getSHA(password));
@@ -291,7 +321,7 @@ public class IEMDBSystem {
 
         }
         currentUser = userEmail;
-        return new AccountInfo(userEmail);
+        return new AccountInfo(userEmail, createJWT(userEmail));
     }
 
     public AccountInfo signUp(String name, String nickName, String userEmail, String password, String birthDate)
@@ -303,7 +333,7 @@ public class IEMDBSystem {
         }
         currentUser = userEmail;
         userRepository.addUser(name, nickName, userEmail, passHash, birthDate);
-        return new AccountInfo(userEmail);
+        return new AccountInfo(userEmail, createJWT(userEmail));
     }
 
     public void logout(){currentUser = "";}
