@@ -33,8 +33,15 @@ public class UserRepository {
     }
 
     public void addUser(String name, String nickName, String userEmail, String password, String birthDate){
-        String query = String.format("INSERT INTO user VALUES ('%s', '%s', '%s', '%s', '%s')",
-                userEmail, password, name, nickName, birthDate);
+        String query;
+        if (password == null) {
+            query = String.format("INSERT INTO user VALUES ('%s', %s, '%s', '%s', '%s')",
+                    userEmail, "NULL", name, nickName, birthDate);
+        }
+        else {
+            query = String.format("INSERT INTO user VALUES ('%s', '%s', '%s', '%s', '%s')",
+                    userEmail, password, name, nickName, birthDate);
+        }
         iemdbRepository.updateQuery(query);
     }
 }

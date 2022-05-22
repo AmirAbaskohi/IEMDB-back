@@ -353,5 +353,17 @@ public class IEMDBSystem {
         return new AccountInfo(userEmail, createJWT(userEmail));
     }
 
+    public AccountInfo handleGithubUser(String name, String nickName, String userEmail, String birthDate) {
+        User foundedUser = userRepository.getUserByEmail(userEmail);
+        if (foundedUser == null) {
+            currentUser = userEmail;
+            userRepository.addUser(name, nickName, userEmail, null, birthDate);
+        }
+        else {
+            currentUser = userEmail;
+        }
+        return new AccountInfo(userEmail, createJWT(userEmail));
+    }
+
     public void logout(){currentUser = "";}
 }
