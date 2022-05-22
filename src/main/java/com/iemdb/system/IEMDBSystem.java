@@ -11,8 +11,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 import javax.crypto.spec.SecretKeySpec;
-import java.math.*;
-import java.nio.charset.*;
 import java.security.*;
 
 import java.time.Instant;
