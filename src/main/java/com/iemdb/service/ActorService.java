@@ -22,14 +22,6 @@ public class ActorService {
 
     @RequestMapping(value = "/{actorId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseInfo> getActor(@PathVariable(value = "actorId") int actorId) {
-        if (iemdbSystem.getCurrentUser() == null ||
-                iemdbSystem.getCurrentUser().isBlank() ||
-                iemdbSystem.getCurrentUser().isEmpty()) {
-            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
-            response.addError("You are not logged in. Please login first.");
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        }
-
         try {
             ActorInfo actorInfo = iemdbSystem.getActorById(actorId);
             ResponseInfo response = new ResponseInfo(actorInfo, true, "Actor returned successfully.");
@@ -43,13 +35,6 @@ public class ActorService {
 
     @RequestMapping(value = "/{actorId}/movies", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseInfo> getActorMovies(@PathVariable(value = "actorId") int actorId) {
-        if (iemdbSystem.getCurrentUser() == null ||
-                iemdbSystem.getCurrentUser().isBlank() ||
-                iemdbSystem.getCurrentUser().isEmpty()) {
-            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
-            response.addError("You are not logged in. Please login first.");
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        }
         try {
             ArrayList<AbstractMovieInfo> actorMovies = iemdbSystem.getMoviesByActor(actorId);
             ResponseInfo response = new ResponseInfo(actorMovies, true, "Actor movies returned successfully.");

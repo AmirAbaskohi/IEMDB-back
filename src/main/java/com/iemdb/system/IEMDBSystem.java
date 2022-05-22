@@ -5,6 +5,7 @@ import com.iemdb.exception.*;
 import com.iemdb.info.*;
 import com.iemdb.model.*;
 import com.iemdb.utils.Util;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -38,6 +39,9 @@ public class IEMDBSystem {
     private final WatchlistRepository watchlistRepository;
 
     private String currentUser = "";
+    String key = "iemdb1401";
+    SignatureAlgorithm alg;
+    Key signKey;
 
     public IEMDBSystem(){
         movieRepository = new MovieRepository();
@@ -45,6 +49,9 @@ public class IEMDBSystem {
         userRepository = new UserRepository();
         actorRepository = new ActorRepository();
         watchlistRepository = new WatchlistRepository();
+
+        alg = SignatureAlgorithm.HS256;
+        signKey = new SecretKeySpec(Util.getSHA(key), alg.getJcaName());
     }
 
     public Comment addComment(String userEmail, String text, int movieId) throws NotFoundException{
@@ -290,12 +297,8 @@ public class IEMDBSystem {
         return movieRepository.getRates(movieId);
     }
 
-    public String getCurrentUser(){return currentUser;}
-
     public String createJWT(String userEmail){
-        SignatureAlgorithm alg = SignatureAlgorithm.HS256;
-        String key = "iemdb1401";
-        Key signKey = new SecretKeySpec(Util.getSHA(key), alg.getJcaName());
+
         Instant now = Instant.now();
 
         JwtBuilder jwtBuilder = Jwts.builder()
@@ -307,6 +310,20 @@ public class IEMDBSystem {
                 .signWith(signKey, alg);
 
         return jwtBuilder.compact();
+    }
+
+    public Claims decodeJWT(String token){
+        try {
+            return Jwts.parser().setSigningKey(signKey).parseClaimsJws(token).getBody();
+        }catch (Exception e){
+            return null;
+        }
+    }
+
+    public boolean validateJwt(Claims claims){
+        if(!claims.getIssuer().equals("IEMDB")) return false;
+        if(claims.getExpiration().before(Date.from(Instant.now()))) return false;
+        return true;
     }
 
     public AccountInfo login(String userEmail, String password) throws NotFoundException{

@@ -23,16 +23,9 @@ public class UserService {
     IEMDBSystem iemdbSystem = IEMDBSystem.getInstance();
 
     @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseInfo> getUser() {
-        if (iemdbSystem.getCurrentUser() == null ||
-                iemdbSystem.getCurrentUser().isBlank() ||
-                iemdbSystem.getCurrentUser().isEmpty()) {
-            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
-            response.addError("You are not logged in. Please login first.");
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        }
+    public ResponseEntity<ResponseInfo> getUser(@RequestAttribute(value = "userEmail") String userEmail) {
         try {
-            User user = iemdbSystem.getUser(iemdbSystem.getCurrentUser());
+            User user = iemdbSystem.getUser(userEmail);
             ResponseInfo response = new ResponseInfo(user, true, "User returned successfully.");
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
@@ -44,16 +37,9 @@ public class UserService {
     }
 
     @RequestMapping(value = "/watchlist", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseInfo> getWatchlist() {
-        if (iemdbSystem.getCurrentUser() == null ||
-                iemdbSystem.getCurrentUser().isBlank() ||
-                iemdbSystem.getCurrentUser().isEmpty()) {
-            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
-            response.addError("You are not logged in. Please login first.");
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        }
+    public ResponseEntity<ResponseInfo> getWatchlist(@RequestAttribute(value = "userEmail") String userEmail) {
         try {
-            ArrayList<Movie> movies = iemdbSystem.getWatchList(iemdbSystem.getCurrentUser());
+            ArrayList<Movie> movies = iemdbSystem.getWatchList(userEmail);
             ArrayList<MovieInfo> moviesInfo = new ArrayList<>();
             for (Movie movie : movies)
                 moviesInfo.add(new MovieInfo(movie, true, 0));
@@ -68,16 +54,10 @@ public class UserService {
     }
 
     @RequestMapping(value = "/watchlist", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseInfo> addToWatchlist(@RequestParam(value = "movieId") int movieId) {
-        if (iemdbSystem.getCurrentUser() == null ||
-                iemdbSystem.getCurrentUser().isBlank() ||
-                iemdbSystem.getCurrentUser().isEmpty()) {
-            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
-            response.addError("You are not logged in. Please login first.");
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        }
+    public ResponseEntity<ResponseInfo> addToWatchlist(@RequestParam(value = "movieId") int movieId,
+                                                       @RequestAttribute(value = "userEmail") String userEmail) {
         try {
-            Movie movie = iemdbSystem.addToWatchList(iemdbSystem.getCurrentUser(), movieId);
+            Movie movie = iemdbSystem.addToWatchList(userEmail, movieId);
             ResponseInfo response = new ResponseInfo(new MovieInfo(movie, true, 0), true, "Movie added to watchlist successfully.");
             return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
         }
@@ -99,16 +79,10 @@ public class UserService {
     }
 
     @RequestMapping(value = "/watchlist", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseInfo> removeFromWatchlist(@RequestParam(value = "movieId") int movieId) {
-        if (iemdbSystem.getCurrentUser() == null ||
-                iemdbSystem.getCurrentUser().isBlank() ||
-                iemdbSystem.getCurrentUser().isEmpty()) {
-            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
-            response.addError("You are not logged in. Please login first.");
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        }
+    public ResponseEntity<ResponseInfo> removeFromWatchlist(@RequestParam(value = "movieId") int movieId,
+                                                            @RequestAttribute(value = "userEmail") String userEmail) {
         try {
-            Movie movie = iemdbSystem.removeFromWatchList(iemdbSystem.getCurrentUser(), movieId);
+            Movie movie = iemdbSystem.removeFromWatchList(userEmail, movieId);
             ResponseInfo response = new ResponseInfo(new MovieInfo(movie, false, 0), true, "Movie removed from watchlist successfully.");
             return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
         }
@@ -120,16 +94,9 @@ public class UserService {
     }
 
     @RequestMapping(value = "/recommendationList", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseInfo> getRecommendationList() {
-        if (iemdbSystem.getCurrentUser() == null ||
-                iemdbSystem.getCurrentUser().isBlank() ||
-                iemdbSystem.getCurrentUser().isEmpty()) {
-            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
-            response.addError("You are not logged in. Please login first.");
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        }
+    public ResponseEntity<ResponseInfo> getRecommendationList(@RequestAttribute(value = "userEmail") String userEmail) {
         try {
-            ArrayList<Movie> movies = iemdbSystem.getRecommendationList(iemdbSystem.getCurrentUser());
+            ArrayList<Movie> movies = iemdbSystem.getRecommendationList(userEmail);
             ArrayList<AbstractMovieInfo> abstractMoviesInfo = new ArrayList<>();
             for (Movie movie : movies)
                 abstractMoviesInfo.add(new AbstractMovieInfo(movie));

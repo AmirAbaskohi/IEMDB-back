@@ -17,17 +17,11 @@ public class CommentService {
     IEMDBSystem iemdbSystem = IEMDBSystem.getInstance();
 
     @RequestMapping(value = "", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseInfo> addComment(@RequestBody CommentForm commentForm) {
-        if (iemdbSystem.getCurrentUser() == null ||
-                iemdbSystem.getCurrentUser().isBlank() ||
-                iemdbSystem.getCurrentUser().isEmpty()) {
-            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
-            response.addError("You are not logged in. Please login first.");
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        }
+    public ResponseEntity<ResponseInfo> addComment(@RequestBody CommentForm commentForm,
+                                                   @RequestAttribute(value = "userEmail") String userEmail) {
         ResponseInfo response = new ResponseInfo();
         try {
-            Comment newComment = iemdbSystem.addComment(iemdbSystem.getCurrentUser(), commentForm.getText(), commentForm.getMovieId());
+            Comment newComment = iemdbSystem.addComment(userEmail, commentForm.getText(), commentForm.getMovieId());
             response.setMessage("Comment added successfully.");
             response.setSuccess(true);
             response.setValue(newComment);
@@ -43,17 +37,11 @@ public class CommentService {
 
     @RequestMapping(value = "/{commentId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseInfo> voteComment(@PathVariable(value = "commentId") int commentId,
-                                                   @RequestParam(value = "vote") int vote) {
-        if (iemdbSystem.getCurrentUser() == null ||
-                iemdbSystem.getCurrentUser().isBlank() ||
-                iemdbSystem.getCurrentUser().isEmpty()) {
-            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
-            response.addError("You are not logged in. Please login first.");
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        }
+                                                    @RequestParam(value = "vote") int vote,
+                                                    @RequestAttribute(value = "userEmail") String userEmail) {
         ResponseInfo response = new ResponseInfo();
         try {
-            Comment comment = iemdbSystem.voteComment(iemdbSystem.getCurrentUser(), commentId, vote);
+            Comment comment = iemdbSystem.voteComment(userEmail, commentId, vote);
             response.setMessage("Comment voted successfully.");
             response.setSuccess(true);
             response.setValue(comment);

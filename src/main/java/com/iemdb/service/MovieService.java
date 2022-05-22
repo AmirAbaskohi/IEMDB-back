@@ -77,17 +77,11 @@ public class MovieService {
     }
 
     @RequestMapping(value = "/{movieId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseInfo> getMovie(@PathVariable(value = "movieId") int movieId) {
-        if (iemdbSystem.getCurrentUser() == null ||
-                iemdbSystem.getCurrentUser().isBlank() ||
-                iemdbSystem.getCurrentUser().isEmpty()) {
-            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
-            response.addError("You are not logged in. Please login first.");
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        }
+    public ResponseEntity<ResponseInfo> getMovie(@PathVariable(value = "movieId") int movieId,
+                                                 @RequestAttribute(value = "userEmail") String userEmail) {
         try {
             Movie selectedMovie = iemdbSystem.getMovieById(movieId);
-            ArrayList<Movie> watchlist = iemdbSystem.getWatchList(iemdbSystem.getCurrentUser());
+            ArrayList<Movie> watchlist = iemdbSystem.getWatchList(userEmail);
             boolean existsInWatchlist = false;
             for (Movie movie : watchlist)
                 if (movie.getId() == selectedMovie.getId()) {
@@ -107,16 +101,11 @@ public class MovieService {
 
     @RequestMapping(value = "/{movieId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseInfo> rateMovie(@PathVariable(value = "movieId") int movieId,
-                                                @RequestParam(value = "score") int score) {
-        if (iemdbSystem.getCurrentUser() == null ||
-                iemdbSystem.getCurrentUser().isBlank() ||
-                iemdbSystem.getCurrentUser().isEmpty()) {
-            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
-            response.addError("You are not logged in. Please login first.");
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        }
+                                                  @RequestParam(value = "score") int score,
+                                                  @RequestAttribute(value = "userEmail") String userEmail) {
+
         try {
-            iemdbSystem.rateMovie(iemdbSystem.getCurrentUser(), movieId, score);
+            iemdbSystem.rateMovie(userEmail, movieId, score);
             MovieRateInfo movieRateInfo = new MovieRateInfo(iemdbSystem.getMovieById(movieId),
                     iemdbSystem.getMovieRates(movieId).size());
             ResponseInfo response = new ResponseInfo(movieRateInfo,
@@ -137,13 +126,6 @@ public class MovieService {
 
     @RequestMapping(value = "/{movieId}/actors", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseInfo> getMovieActors(@PathVariable(value = "movieId") int movieId) {
-        if (iemdbSystem.getCurrentUser() == null ||
-                iemdbSystem.getCurrentUser().isBlank() ||
-                iemdbSystem.getCurrentUser().isEmpty()) {
-            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
-            response.addError("You are not logged in. Please login first.");
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        }
         try {
             ArrayList<AbstractActorInfo> movieActors = iemdbSystem.getMovieActors(movieId);
             ResponseInfo response = new ResponseInfo(movieActors,true, "Movie actors returned successfully.");
@@ -157,13 +139,6 @@ public class MovieService {
 
     @RequestMapping(value = "/{movieId}/comments", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseInfo> getMovieComments(@PathVariable(value = "movieId") int movieId) {
-        if (iemdbSystem.getCurrentUser() == null ||
-                iemdbSystem.getCurrentUser().isBlank() ||
-                iemdbSystem.getCurrentUser().isEmpty()) {
-            ResponseInfo response = new ResponseInfo(null, false, "Unauthorized.");
-            response.addError("You are not logged in. Please login first.");
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        }
         try {
             ArrayList<Comment> movieComments = iemdbSystem.getMovieComments(movieId);
             ResponseInfo response = new ResponseInfo(movieComments,true, "Movie comments returned successfully.");
