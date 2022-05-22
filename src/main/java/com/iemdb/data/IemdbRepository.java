@@ -36,29 +36,34 @@ public class IemdbRepository {
     }
 
     public void initializeTables(){
-        if(sendQuery("select * from user").size() == 0){
+        if(sendQuery("select * from user", null).size() == 0){
             addUsers();
         }
-        if(sendQuery("select * from actor").size() == 0){
+        if(sendQuery("select * from actor", null).size() == 0){
             addActors();
         }
-        if (sendQuery("select * from movie").size() == 0){
+        if (sendQuery("select * from movie", null).size() == 0){
             addMovies();
         }
-        if (sendQuery("select * from comment").size() == 0){
+        if (sendQuery("select * from comment", null).size() == 0){
             addComments();
         }
     }
 
-    public ArrayList<Map<String, Object>> sendQuery(String query){
+    public ArrayList<Map<String, Object>> sendQuery(String query, ArrayList<Object> param){
         ArrayList<Map<String, Object>> response = new ArrayList<>();
             Connection connection = null;
-            Statement statement = null;
+            PreparedStatement statement = null;
             ResultSet result = null;
         try {
             connection = dataSource.getConnection();
-            statement = connection.createStatement();
-            result = statement.executeQuery(query);
+            statement = connection.prepareStatement(query);
+            if(param != null){
+                for(int i = 1; i <= param.size(); i+=1){
+                    statement.setObject(i, param.get(i-1));
+                }
+            }
+            result = statement.executeQuery();
             ResultSetMetaData metaData= result.getMetaData();
 
             while (result.next()){
@@ -85,13 +90,18 @@ public class IemdbRepository {
         return response;
     }
 
-    public void updateQuery(String query){
+    public void updateQuery(String query, ArrayList<Object> param){
         Connection connection = null;
-        Statement statement = null;
+        PreparedStatement statement = null;
         try {
             connection = dataSource.getConnection();
-            statement = connection.createStatement();
-            statement.executeUpdate(query);
+            statement = connection.prepareStatement(query);
+            if(param != null){
+                for(int i = 1; i <= param.size(); i+=1){
+                    statement.setObject(i, param.get(i-1));
+                }
+            }
+            statement.executeUpdate();
 
         } catch (SQLException e) {
             System.out.println("BadQuery");
@@ -145,7 +155,7 @@ public class IemdbRepository {
             query += ")";
             commaNeeded = true;
         }
-        updateQuery(query);
+        updateQuery(query, null);
     }
 
     public void addActors(){
@@ -167,7 +177,7 @@ public class IemdbRepository {
             query += "'" + userData.getString("nationality") + "',";
             query += "'" + userData.getString("image") + "'";
             query += ")";
-            updateQuery(query);
+            updateQuery(query, null);
         }
     }
 
@@ -195,7 +205,7 @@ public class IemdbRepository {
             query += "'" + movieData.getString("coverImage") + "'";
             query += ");";
 
-            updateQuery(query);
+            updateQuery(query, null);
 
             JSONArray movieWriters = movieData.getJSONArray("writers");
             JSONArray movieGenres = movieData.getJSONArray("genres");
@@ -214,7 +224,7 @@ public class IemdbRepository {
                 writerQuery += "'" + (String)movieWriter + "'";
                 writerQuery += ");";
 
-                updateQuery(writerQuery);
+                updateQuery(writerQuery, null);
 
                 writerQuery = "INSERT INTO writer_movie VALUES ";
                 writerQuery += "(";
@@ -222,7 +232,7 @@ public class IemdbRepository {
                 writerQuery += "" + movieData.getInt("id") + "";
                 writerQuery += ");";
 
-                updateQuery(writerQuery);
+                updateQuery(writerQuery, null);
             }
 
             for (Object movieGenre : movieGenres) {
@@ -238,7 +248,7 @@ public class IemdbRepository {
                 genreQuery += "'" + movieGenre + "'";
                 genreQuery += ");";
 
-                updateQuery(genreQuery);
+                updateQuery(genreQuery, null);
 
                 genreQuery = "INSERT INTO genre_movie VALUES ";
                 genreQuery += "(";
@@ -246,7 +256,7 @@ public class IemdbRepository {
                 genreQuery += "" + (genreIndex+1) + "";
                 genreQuery += ");";
 
-                updateQuery(genreQuery);
+                updateQuery(genreQuery, null);
             }
 
             for (Object movieActor : movieCast) {
@@ -258,7 +268,7 @@ public class IemdbRepository {
                 actorQuery += "" + movieData.getInt("id") + "";
                 actorQuery += ");";
 
-                updateQuery(actorQuery);
+                updateQuery(actorQuery, null);
             }
         }
     }
@@ -275,7 +285,7 @@ public class IemdbRepository {
             query += "'" + commentData.getString("text") + "',";
             query += "" + commentData.getInt("movieId") + "";
             query += ")";
-            updateQuery(query);
+            updateQuery(query, null);
         }
     }
 

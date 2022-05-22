@@ -15,7 +15,7 @@ public class UserRepository {
     public ArrayList<User> getUsers(){
         ArrayList<User> users = new ArrayList<>();
         String query = "select * from user";
-        ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(query);
+        ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(query, null);
         for(Map<String, Object> result : queryResult){
             User newUser = new User(result);
             users.add(newUser);
@@ -24,8 +24,10 @@ public class UserRepository {
     }
 
     public User getUserByEmail(String userEmail){
-        String query = String.format("select * from user u where u.email='%s'", userEmail);
-        ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(query);
+        ArrayList<Object> params = new ArrayList<>();
+        String query = "select * from user u where u.email=?";
+        params.add(userEmail);
+        ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(query, params);
         if(queryResult.size() > 0){
             return new User(queryResult.get(0));
         }
@@ -35,13 +37,13 @@ public class UserRepository {
     public void addUser(String name, String nickName, String userEmail, String password, String birthDate){
         String query;
         if (password == null) {
-            query = String.format("INSERT INTO user VALUES ('%s', %s, '%s', '%s', '%s')",
-                    userEmail, "NULL", name, nickName, birthDate);
+            query = "INSERT INTO user VALUES (?, ?, ?, ?, ?)";
+            iemdbRepository.updateQuery(query, new ArrayList<>(List.of(userEmail, "NULL", name, nickName, birthDate)));
         }
         else {
-            query = String.format("INSERT INTO user VALUES ('%s', '%s', '%s', '%s', '%s')",
-                    userEmail, password, name, nickName, birthDate);
+            query = "INSERT INTO user VALUES (?, ?, ?, ?, ?)";
+            iemdbRepository.updateQuery(query, new ArrayList<>(List.of(userEmail, password, name, nickName, birthDate)));
         }
-        iemdbRepository.updateQuery(query);
+
     }
 }

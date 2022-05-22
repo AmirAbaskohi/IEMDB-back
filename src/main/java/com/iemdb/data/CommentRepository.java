@@ -12,10 +12,12 @@ public class CommentRepository {
     }
 
     public ArrayList<Comment> getComment(String userEmail, int movieId){
+        ArrayList<Object> params = new ArrayList<>();
         ArrayList<Comment> comments = new ArrayList<>();
-        String query = String.format("select * from comment c where c.userEmail='%s' and c.movieId=%d order by c.id",
-                userEmail, movieId);
-        ArrayList<Map<String, Object>> response = iemdbRepository.sendQuery(query);
+        String query = "select * from comment c where c.userEmail=? and c.movieId=? order by c.id";
+        params.add(userEmail);
+        params.add(movieId);
+        ArrayList<Map<String, Object>> response = iemdbRepository.sendQuery(query, params);
         for(Map<String, Object> entry: response){
             Comment newComment = new Comment(entry);
             newComment.setVotes(getCommentVotes(newComment.getId()));
@@ -26,8 +28,10 @@ public class CommentRepository {
     }
 
     public Comment getCommentById(int commentId){
-        String query = String.format("select * from comment c where c.id=%d", commentId);
-        ArrayList<Map<String, Object>> response = iemdbRepository.sendQuery(query);
+        ArrayList<Object> params = new ArrayList<>();
+        String query = "select * from comment c where c.id=?";
+        params.add(commentId);
+        ArrayList<Map<String, Object>> response = iemdbRepository.sendQuery(query, params);
         if(response.size() > 0){
             Comment newComment = new Comment(response.get(0));
             newComment.setVotes(getCommentVotes(newComment.getId()));
@@ -40,9 +44,11 @@ public class CommentRepository {
     }
 
     public ArrayList<Comment> getMovieComments(int movieId){
+        ArrayList<Object> params = new ArrayList<>();
         ArrayList<Comment> comments = new ArrayList<>();
-        String query = String.format("select * from comment c where c.movieId=%d", movieId);
-        ArrayList<Map<String, Object>> response = iemdbRepository.sendQuery(query);
+        String query = "select * from comment c where c.movieId=?";
+        params.add(movieId);
+        ArrayList<Map<String, Object>> response = iemdbRepository.sendQuery(query, params);
         for(Map<String, Object> entry: response){
             Comment newComment = new Comment(entry);
             newComment.setVotes(getCommentVotes(newComment.getId()));
@@ -53,9 +59,11 @@ public class CommentRepository {
     }
 
     public ArrayList<Vote> getCommentVotes(int commentId){
+        ArrayList<Object> params = new ArrayList<>();
         ArrayList<Vote> votes = new ArrayList<>();
-        String query = String.format("select * from vote v where v.commentId=%d", commentId);
-        ArrayList<Map<String, Object>> response = iemdbRepository.sendQuery(query);
+        String query = "select * from vote v where v.commentId=?";
+        params.add(commentId);
+        ArrayList<Map<String, Object>> response = iemdbRepository.sendQuery(query, params);
         for(Map<String, Object> entry: response){
             Vote newVote = new Vote(entry);
             votes.add(newVote);
@@ -64,8 +72,10 @@ public class CommentRepository {
     }
 
     public String getCommentUserNickname(String userEmail){
-        String query = String.format("select * from user u where u.email='%s'", userEmail);
-        ArrayList<Map<String, Object>> response = iemdbRepository.sendQuery(query);
+        ArrayList<Object> params = new ArrayList<>();
+        String query = "select * from user u where u.email=?";
+        params.add(userEmail);
+        ArrayList<Map<String, Object>> response = iemdbRepository.sendQuery(query, params);
         if(response.size() > 0){
             User newUser = new User(response.get(0));
             return newUser.getNickName();
@@ -76,23 +86,23 @@ public class CommentRepository {
     }
 
     public void addComment(String userEmail, String text, int movieId){
-        String query = String.format("insert into comment values(null, '%s', '%s', %d)",
-                userEmail, text, movieId);
-        iemdbRepository.updateQuery(query);
+        String query = "insert into comment values(null, ?, ?, ?)";
+        iemdbRepository.updateQuery(query, new ArrayList<>(List.of(userEmail, text, movieId)));
     }
 
     public void addVote(String userEmail, int commentId, int vote){
-        String searchQuery = String.format("select * from vote v where v.commentId=%d and v.userEmail='%s'",
-                commentId, userEmail);
-        ArrayList<Map<String, Object>> response = iemdbRepository.sendQuery(searchQuery);
+        ArrayList<Object> params = new ArrayList<>();
+        String searchQuery = "select * from vote v where v.commentId=? and v.userEmail=?";
+        params.add(commentId);
+        params.add(userEmail);
+        ArrayList<Map<String, Object>> response = iemdbRepository.sendQuery(searchQuery, params);
         String query;
         if(response.size() > 0){
-            query = String.format("update vote set vote=%d where commentId=%d and userEmail='%s'",
-                    vote, commentId, userEmail);
+            query = "update vote set vote=? where commentId=? and userEmail=?";
+            iemdbRepository.updateQuery(query, new ArrayList<>(List.of(vote, commentId, userEmail)));
         }else{
-            query = String.format("insert into vote values(%d, '%s', %d)",
-                    commentId, userEmail, vote);
+            query = "insert into vote values(?, ?, ?)";
+            iemdbRepository.updateQuery(query, new ArrayList<>(List.of(commentId, userEmail, vote)));
         }
-        iemdbRepository.updateQuery(query);
     }
 }

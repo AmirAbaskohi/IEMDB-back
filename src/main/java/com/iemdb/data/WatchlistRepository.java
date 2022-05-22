@@ -3,6 +3,7 @@ package com.iemdb.data;
 import com.iemdb.model.Movie;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class WatchlistRepository {
@@ -15,35 +16,32 @@ public class WatchlistRepository {
     }
 
     public boolean existsInWatchlist(int movieId, String userEmail) {
-        String dbQuery = "SELECT * FROM watchlist ";
-        dbQuery += "WHERE movieId = " + movieId + " AND userEmail = '" + userEmail + "';";
-        return iemdbRepository.sendQuery(dbQuery).size() != 0;
+        ArrayList<Object> params = new ArrayList<>();
+        String dbQuery = "SELECT * FROM watchlist WHERE movieId = ? AND userEmail = ?;";
+        params.add(movieId);
+        params.add(userEmail);
+        return iemdbRepository.sendQuery(dbQuery, params).size() != 0;
     }
 
     public void addToWatchlist(int movieId, String userEmail) {
-        String dbQuery = "SELECT * FROM watchlist ";
-        dbQuery += "WHERE movieId = " + movieId + " AND userEmail = '" + userEmail + "';";
-        if (iemdbRepository.sendQuery(dbQuery).size() == 0) {
-            dbQuery = "INSERT INTO watchlist VALUES (" + movieId + ",'" + userEmail + "');";
-            iemdbRepository.updateQuery(dbQuery);
+        if (!existsInWatchlist(movieId, userEmail)) {
+            String dbQuery = "INSERT INTO watchlist VALUES (? , ?);";
+            iemdbRepository.updateQuery(dbQuery, new ArrayList<>(List.of(movieId, userEmail)));
         }
     }
 
     public void removeFromWatchlist(int movieId, String userEmail) {
-        String dbQuery = String.format("SELECT * FROM watchlist " +
-                "WHERE movieId = %d AND userEmail = '%s';", movieId, userEmail);
-        if (iemdbRepository.sendQuery(dbQuery).size() != 0) {
-            dbQuery = String.format("DELETE FROM watchlist " +
-                    "WHERE movieId = %d And userEmail = '%s';",movieId,userEmail);
-            iemdbRepository.updateQuery(dbQuery);
+        if (existsInWatchlist(movieId, userEmail)) {
+            String dbQuery = "DELETE FROM watchlist WHERE movieId = ? And userEmail = ?;";
+            iemdbRepository.updateQuery(dbQuery, new ArrayList<>(List.of(movieId, userEmail)));
         }
     }
 
     public ArrayList<Movie> getWatchlist(String userEmail) {
-        String dbQuery = String.format("SELECT * FROM watchlist wl, movie m " +
-                "WHERE wl.userEmail = '%s' AND wl.movieId = m.id;", userEmail);
-
-        ArrayList<Map<String, Object>> watchlistMovies = iemdbRepository.sendQuery(dbQuery);
+        ArrayList<Object> params = new ArrayList<>();
+        String dbQuery = "SELECT * FROM watchlist wl, movie m WHERE wl.userEmail = ? AND wl.movieId = m.id;";
+        params.add(userEmail);
+        ArrayList<Map<String, Object>> watchlistMovies = iemdbRepository.sendQuery(dbQuery, params);
         ArrayList<Movie> result = new ArrayList<>();
 
         for (Map<String, Object> row : watchlistMovies) {

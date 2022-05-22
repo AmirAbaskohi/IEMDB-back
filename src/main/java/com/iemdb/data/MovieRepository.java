@@ -12,14 +12,16 @@ public class MovieRepository {
     }
 
     private ArrayList<Movie> getMoviesByName(String name, String sort) {
+        ArrayList<Object> params = new ArrayList<>();
         ArrayList<Movie> result = new ArrayList<>();
-        String dbQuery = String.format("SELECT * FROM movie m WHERE m.name LIKE '%%%s%%'", name);
+        String dbQuery = "SELECT * FROM movie m WHERE m.name LIKE ?";
+        params.add("%" + name + "%");
         if (sort != null) {
             String orderColumn = sort.equals("date") ? "m.releaseDate" : "m.imdbRate";
             dbQuery += " ORDER BY " + orderColumn + " DESC";
         }
         dbQuery += ";";
-        ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(dbQuery);
+        ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(dbQuery, params);
         for (Map<String, Object> row : queryResult) {
             Movie newMovie = new Movie(row);
             result.add(newMovie);
@@ -28,15 +30,17 @@ public class MovieRepository {
     }
 
     private ArrayList<Movie> getMoviesByGenre(String genre, String sort) {
+        ArrayList<Object> params = new ArrayList<>();
         ArrayList<Movie> result = new ArrayList<>();
-        String dbQuery = String.format("SELECT m.* FROM movie m, genre_movie gm, genre g " +
-                "WHERE gm.movieId = m.Id AND gm.genreId = g.Id AND g.name LIKE '%%%s%%'", genre);
+        String dbQuery = "SELECT m.* FROM movie m, genre_movie gm, genre g " +
+                "WHERE gm.movieId = m.Id AND gm.genreId = g.Id AND g.name LIKE ?";
+        params.add("%" + genre + "%");
         if (sort != null) {
             String orderColumn = sort.equals("date") ? "m.releaseDate" : "m.imdbRate";
             dbQuery += " ORDER BY " + orderColumn + " DESC";
         }
         dbQuery += ";";
-        ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(dbQuery);
+        ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(dbQuery, params);
         for (Map<String, Object> row : queryResult) {
             Movie newMovie = new Movie(row);
             result.add(newMovie);
@@ -47,15 +51,17 @@ public class MovieRepository {
     private ArrayList<Movie> getMoviesByDate(String date, String sort) {
         int start = Integer.parseInt(date.split("-", 2)[0]);
         int end = Integer.parseInt(date.split("-", 2)[1]);
+        ArrayList<Object> params = new ArrayList<>();
         ArrayList<Movie> result = new ArrayList<>();
-        String dbQuery = String.format("SELECT * FROM movie m " +
-                "WHERE YEAR(m.releaseDate) >= %d AND YEAR(m.releaseDate) <= %d", start, end);
+        String dbQuery = "SELECT * FROM movie m WHERE YEAR(m.releaseDate) >= ? AND YEAR(m.releaseDate) <= ?";
+        params.add(start);
+        params.add(end);
         if (sort != null) {
             String orderColumn = sort.equals("date") ? "m.releaseDate" : "m.imdbRate";
             dbQuery += " ORDER BY " + orderColumn + " DESC";
         }
         dbQuery += ";";
-        ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(dbQuery);
+        ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(dbQuery, params);
         for (Map<String, Object> row : queryResult) {
             Movie newMovie = new Movie(row);
             result.add(newMovie);
@@ -73,14 +79,15 @@ public class MovieRepository {
                 return getMoviesByDate(query, sort);
         }
         else {
+            ArrayList<Object> params = new ArrayList<>();
             ArrayList<Movie> result = new ArrayList<>();
-            String dbQuery = "SELECT * FROM movie";
+            String dbQuery = "SELECT * FROM movie m";
             if (sort != null) {
-                String orderColumn = sort.equals("date") ? "releaseDate" : "imdbRate";
+                String orderColumn = sort.equals("date") ? "m.releaseDate" : "m.imdbRate";
                 dbQuery += " ORDER BY " + orderColumn + " DESC";
             }
             dbQuery += ";";
-            ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(dbQuery);
+            ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(dbQuery, params);
             for (Map<String, Object> row : queryResult) {
                 Movie newMovie = new Movie(row);
                 result.add(newMovie);
@@ -89,9 +96,11 @@ public class MovieRepository {
         }
     }
 
-    public Movie getMovie(int movieId) {;
-        String dbQuery = String.format("SELECT * FROM movie WHERE id = %d;", movieId);
-        ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(dbQuery);
+    public Movie getMovie(int movieId) {
+        ArrayList<Object> params = new ArrayList<>();
+        String dbQuery = "SELECT * FROM movie WHERE id = ?;";
+        params.add(movieId);
+        ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(dbQuery, params);
         if (queryResult.size() == 0)
             return null;
         Movie wantedMovie = new Movie(queryResult.get(0));
@@ -103,10 +112,11 @@ public class MovieRepository {
     }
 
     public ArrayList<Actor> getActors(int movieId) {
+        ArrayList<Object> params = new ArrayList<>();
         ArrayList<Actor> result = new ArrayList<>();
-        String dbQuery = String.format("SELECT a.* FROM actor a, actor_movie am " +
-                "WHERE am.movieId = %d AND a.id = am.actorId;", movieId);
-        ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(dbQuery);
+        String dbQuery = "SELECT a.* FROM actor a, actor_movie am WHERE am.movieId = ? AND a.id = am.actorId;";
+        params.add(movieId);
+        ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(dbQuery, params);
         for (Map<String, Object> row : queryResult) {
             Actor newActor = new Actor(row);
             result.add(newActor);
@@ -115,29 +125,32 @@ public class MovieRepository {
     }
 
     public void addRate(String userEmail, int movieId, int score){
-        String dbQuery = String.format("select * from rate r " +
-                "where r.movieId=%d and r.userEmail='%s'", movieId, userEmail);
-        ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(dbQuery);
+        ArrayList<Object> params = new ArrayList<>();
+        String dbQuery = "select * from rate r where r.movieId=? and r.userEmail=?";
+        params.add(movieId);
+        params.add(userEmail);
+        ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(dbQuery, params);
         String query;
         if(queryResult.size() > 0){
-            query = String.format("update rate set score=%d where movieId=%d and userEmail='%s'",
-                    score, movieId, userEmail);
+            query = "update rate set score=? where movieId=? and userEmail=?";
+            iemdbRepository.updateQuery(query, new ArrayList<>(List.of(score, movieId, userEmail)));
         }else{
-            query = String.format("insert into rate values('%s', %d, %d)",
-                    userEmail, movieId, score);
+            query = "insert into rate values(?, ?, ?)";
+            iemdbRepository.updateQuery(query, new ArrayList<>(List.of(userEmail, movieId, score)));
         }
-        iemdbRepository.updateQuery(query);
 
-        dbQuery = String.format("UPDATE movie\n" +
-                "SET rating = (SELECT SUM(r.score)/COUNT(*) FROM rate r WHERE r.movieId = %d)\n" +
-                "WHERE id = %d;", movieId, movieId);
-        iemdbRepository.updateQuery(dbQuery);
+        dbQuery = "UPDATE movie\n" +
+                "SET rating = (SELECT SUM(r.score)/COUNT(*) FROM rate r WHERE r.movieId = ?)\n" +
+                "WHERE id = ?;";
+        iemdbRepository.updateQuery(dbQuery, new ArrayList<>(List.of(movieId, movieId)));
     }
 
     public Rate getRate(String userEmail, int movieId){
-        String dbQuery = String.format("select * from rate r " +
-                "where r.userEmail='%s' and r.movieId=%d", userEmail, movieId);
-        ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(dbQuery);
+        ArrayList<Object> params = new ArrayList<>();
+        String dbQuery = "select * from rate r where r.userEmail=? and r.movieId=?";
+        params.add(userEmail);
+        params.add(movieId);
+        ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(dbQuery, params);
         if(queryResult.size() > 0){
             Rate newRate = new Rate(queryResult.get(0));
             return newRate;
@@ -148,9 +161,10 @@ public class MovieRepository {
     }
 
     public ArrayList<Rate> getRates(int movieId){
-        String dbQuery = String.format("select * from rate r " +
-                "where r.movieId=%d", movieId);
-        ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(dbQuery);
+        ArrayList<Object> params = new ArrayList<>();
+        String dbQuery = "select * from rate r where r.movieId=?";
+        params.add(movieId);
+        ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(dbQuery, params);
         ArrayList<Rate> movieRates = new ArrayList<>();
         for (Map<String, Object> row : queryResult) {
             movieRates.add(new Rate(row));
@@ -159,9 +173,10 @@ public class MovieRepository {
     }
 
     public ArrayList<String> getGenres(int movieId){
-        String dbQuery = String.format("SELECT g.name FROM genre_movie gm, genre g " +
-                "WHERE gm.movieId = %d AND gm.genreId = g.id", movieId);
-        ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(dbQuery);
+        ArrayList<Object> params = new ArrayList<>();
+        String dbQuery = "SELECT g.name FROM genre_movie gm, genre g WHERE gm.movieId = ? AND gm.genreId = g.id";
+        params.add(movieId);
+        ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(dbQuery, params);
         ArrayList<String> movieGenres = new ArrayList<>();
         for (Map<String, Object> row : queryResult) {
             movieGenres.add((String) row.get("name"));
@@ -170,9 +185,10 @@ public class MovieRepository {
     }
 
     public ArrayList<String> getWriters(int movieId){
-        String dbQuery = String.format("SELECT w.name FROM writer_movie wm, writer w " +
-                "WHERE wm.movieId = %d AND wm.writerId = w.id", movieId);
-        ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(dbQuery);
+        ArrayList<Object> params = new ArrayList<>();
+        String dbQuery = "SELECT w.name FROM writer_movie wm, writer w WHERE wm.movieId = ? AND wm.writerId = w.id";
+        params.add(movieId);
+        ArrayList<Map<String, Object>> queryResult = iemdbRepository.sendQuery(dbQuery, params);
         ArrayList<String> movieWriters = new ArrayList<>();
         for (Map<String, Object> row : queryResult) {
             movieWriters.add((String) row.get("name"));
