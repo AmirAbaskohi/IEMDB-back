@@ -353,12 +353,9 @@ public class IEMDBSystem {
 
     public AccountInfo handleGithubUser(String name, String nickName, String userEmail, String birthDate) {
         User foundedUser = userRepository.getUserByEmail(userEmail);
+        currentUser = userEmail;
         if (foundedUser == null) {
-            currentUser = userEmail;
             userRepository.addUser(name, nickName, userEmail, null, birthDate);
-        }
-        else {
-            currentUser = userEmail;
         }
         return new AccountInfo(userEmail, createJWT(userEmail));
     }
