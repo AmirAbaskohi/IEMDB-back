@@ -37,8 +37,12 @@ public class AuthenticationFilter implements Filter {
             return;
         }
 
-        if(req.getHeader("jwt")!= null && !req.getHeader("jwt").equals("null")){
-            Claims claims = IEMDBSystem.getInstance().decodeJWT(req.getHeader("jwt"));
+        String header = req.getHeader("Authorization");
+        String[] arrOfStr = header.split(" ", 2);
+        String jwt = arrOfStr[1];
+
+        if(jwt != null && !jwt.equals("null")){
+            Claims claims = IEMDBSystem.getInstance().decodeJWT(jwt);
             if(IEMDBSystem.getInstance().validateJwt(claims)){
                 request.setAttribute("userEmail", claims.get("userEmail"));
                 chain.doFilter(request, response);
