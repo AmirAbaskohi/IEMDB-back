@@ -18,3 +18,15 @@ localhost:[the port that application is running on]/swagger-ui/index.html
 From here you can see apis, their functionality, their response time, and their parameters. You can call these apis from here.
 
 In addittion you can use you browser, `postman`, your own javascript code for calling an api, etc. 
+
+## Docker commands
+For `MySQL`:
+```
+docker pull mysql
+docker run -d -p 3306:3306 --name=docker-mysql --env="MYSQL_ROOT_PASSWORD=Root_1234" --env="MYSQL_DATABASE=iemdb" mysql
+```
+For `Spring` APIs:
+```
+docker build -t back_image .
+docker run --name back_container --link docker-mysql:localhost -p 8080:8080 back_image
+```
