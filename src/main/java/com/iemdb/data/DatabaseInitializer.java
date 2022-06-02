@@ -1,5 +1,6 @@
 package com.iemdb.data;
 
+import com.iemdb.sqls.SqlQueries;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 import java.io.*;
@@ -63,13 +64,8 @@ public class DatabaseInitializer {
 
     public void createTables(){
         for (String tableName : tableNames){
-            try {
-                String content = new Scanner(new File("./src/main/java/com/iemdb/sqls/iemdb_" + tableName + ".sql"))
-                        .useDelimiter("\\Z").next();
-                updateQuery(content);
-            }catch (IOException e){
-                e.printStackTrace();
-            }
+            String content = SqlQueries.getQueries().get(tableName);
+            updateQuery(content);
         }
     }
 
