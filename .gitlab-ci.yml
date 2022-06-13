@@ -3,9 +3,9 @@ stages:
 
 variables:
   CI_REGISTRY_USER: arash_rasouli
-  CI_REGISTRY_PASSWORD: Abcd1234
+  CI_REGISTRY_PASSWORD: VxWIs/8Tr7sksYkW7XJJAZcLMFOZmBONrtPQzD+z9R8C2aLBG24LTjHphAybGaZ+
   CI_REGISTRY: quay.io
-  CI_REGISTRY_IMAGE: index.quay.io/arash-rasouli/iemdb:back
+  CI_REGISTRY_IMAGE: quay.io/arash_rasouli/iemdb-back
 
 docker-build:
   image: docker:latest
