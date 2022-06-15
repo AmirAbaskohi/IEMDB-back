@@ -22,7 +22,7 @@ public class IemdbRepository {
             e.printStackTrace();
         }
         dataSource = new ComboPooledDataSource();
-        dataSource.setJdbcUrl("jdbc:mysql://localhost:3306/iemdb?autoReconnect=true&useSSL=false");
+        dataSource.setJdbcUrl("jdbc:mysql://iemdb-mysql:3306/iemdb?autoReconnect=true&useSSL=false");
         dataSource.setUser("root");
         dataSource.setPassword("Root_1234");
 
