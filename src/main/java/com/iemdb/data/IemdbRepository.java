@@ -24,7 +24,7 @@ public class IemdbRepository {
         dataSource = new ComboPooledDataSource();
         dataSource.setJdbcUrl("jdbc:mysql://iemdb-mysql:3306/iemdb?autoReconnect=true&useSSL=false");
         dataSource.setUser("root");
-        dataSource.setPassword("Root_1234");
+        dataSource.setPassword("root");
 
         dataSource.setInitialPoolSize(5);
         dataSource.setMinPoolSize(5);
