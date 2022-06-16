@@ -20,7 +20,7 @@ public class IEMDBApp {
 
 		try{
 			Class.forName("com.mysql.cj.jdbc.Driver");
-			Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306","root","root");
+			Connection con=DriverManager.getConnection("jdbc:mysql://iemdb-mysql:3306","root","root");
 			ResultSet resultSet = con.getMetaData().getCatalogs();
 			while (resultSet.next()) {
 				String name = resultSet.getString(1);
