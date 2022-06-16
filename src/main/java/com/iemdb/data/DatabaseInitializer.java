@@ -22,7 +22,7 @@ public class DatabaseInitializer {
             e.printStackTrace();
         }
         dataSource = new ComboPooledDataSource();
-        dataSource.setJdbcUrl("jdbc:mysql://iemdb-mysql:3306?autoReconnect=true&useSSL=false");
+        dataSource.setJdbcUrl("jdbc:mysql://iemdb-mysql:3306?autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true");
         dataSource.setUser("root");
         dataSource.setPassword("root");
 
@@ -93,7 +93,9 @@ public class DatabaseInitializer {
     public void changeConnection(){
         dataSource.close();
         dataSource = new ComboPooledDataSource();
-        dataSource.setJdbcUrl("jdbc:mysql://iemdb-mysql:3306/" + databaseName + "?autoReconnect=true&useSSL=false");
+        dataSource.setJdbcUrl("jdbc:mysql://iemdb-mysql:3306/" + databaseName + "?autoReconnect=true&" +
+                "useSSL=false&" +
+                "allowPublicKeyRetrieval=true");
         dataSource.setUser("root");
         dataSource.setPassword("root");
 
